@@ -15,3 +15,11 @@ pip install -r requirements.txt
 ```
 
 3. Set env variable GOOGLE_API_KEY to an api key generated in google that will have permissions to the YouTube service
+
+4.
+```shell
+cd pull-transcripts
+python pull-transcripts.py
+```
+
+5. cd create-embeddings

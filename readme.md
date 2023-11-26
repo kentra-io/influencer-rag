@@ -22,4 +22,8 @@ cd pull-transcripts
 python pull-transcripts.py
 ```
 
-5. cd create-embeddings
+5. 
+```shell
+cd create-embeddings
+python create-embeddings.py
+```

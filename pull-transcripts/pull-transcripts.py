@@ -14,7 +14,8 @@ def getUploadsPlaylistId(channel_id, youtube):
     uploads_playlist_id = response['items'][0]['contentDetails']['relatedPlaylists']['uploads']
     return uploads_playlist_id
 
-
+# todo: there's a bug here, if there are more channels on page (linked channels) we might pick the wrong one
+# example: handle @JeffNippard
 def scraping_get_channel_id_from_handle(handle: str):
     if handle.find('@') == -1:
         handle = '@' + handle

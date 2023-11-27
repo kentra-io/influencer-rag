@@ -1,1 +1,1 @@
-channelYoutubeHandles = ['WesRoth', 'PromptEngineer48', 'engineerprompt']
+channelYoutubeHandles = ['WesRoth', 'PromptEngineer48', 'engineerprompt', 'JeffNippard']

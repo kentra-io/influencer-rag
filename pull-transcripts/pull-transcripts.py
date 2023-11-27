@@ -1,9 +1,12 @@
+import json
+import os
+import re
+
+import requests
 from googleapiclient.discovery import build
 from youtube_transcript_api import YouTubeTranscriptApi, NoTranscriptFound
+
 import config
-import requests
-import re
-import json
 
 def getUploadsPlaylistId(channel_id, youtube):
     request = youtube.channels().list(part='contentDetails', id=channel_id)
@@ -92,7 +95,12 @@ def get_all_transcripts(channelHandle, api_key, file_path, language='en'):
 
 def main():
     for channel in config.channelYoutubeHandles:
-        file_path = f"../transcripts/{channel}_transcripts.json"
+        parent_file_path = "../transcripts/"
+
+        if not os.path.exists(parent_file_path):
+            os.makedirs(parent_file_path)
+
+        file_path = f"{parent_file_path}/{channel}_transcripts.json"
         get_all_transcripts(channel, config.API_KEY, file_path)
 
 main()

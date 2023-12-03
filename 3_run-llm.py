@@ -6,7 +6,10 @@ import sys
 import time
 from datetime import timedelta
 
+import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
+
+import transformers
 
 from vector_db import chroma_provider
 
@@ -19,24 +22,33 @@ tokenizer = AutoTokenizer.from_pretrained(model_name)
 
 def ask_question(question):
     query_start_time = time.time()
-    # Perform retrieval from Chroma
+
     similar_documents = chroma.similarity_search(question, top_k=3)
-    # print("Retrieved context: " + " \n".join(
-    #     [doc.page_content for doc in similar_documents]))
+    similar_documents_combined = " ".join([doc.page_content for doc in similar_documents])
 
-    # Combine retrieved context with the user query
-    combined_input = "[INST]You'll get a question and context. Base your answer only on the context provided. \n" \
-                     " Context: " + " ".join(
-    [doc.page_content for doc in similar_documents]) + "\n Question: " + question + "[/INST]"
+    pipeline = transformers.pipeline(
+        'text-generation',
+        model=model,
+        tokenizer=tokenizer,
+        torch_dtype=torch.bfloat16,
+        device_map='auto',
+    )
 
-    # Encode the input and generate a response
-    inputs = tokenizer.encode(combined_input, return_tensors="pt")
-    outputs = model.generate(inputs, max_length=1000)
-    response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    prompt = ("<SYS>You'll get a question and context. Base your answer on the context provided."
+              f"<INST>Context: {similar_documents_combined}\n"
+              f"Question: {question}"
+              "<RESP>")
+
+    response = pipeline(
+        prompt,
+        max_length=1000,
+        repetition_penalty=1.05,
+        pad_token_id=50256
+    )
 
     execution_time = time.time() - query_start_time
 
-    answer = re.search(r'.*\[/INST](.*)', response)
+    answer = re.search(r'.*<RESP>(.*)', response[0]['generated_text'])
 
     if answer:
         return [answer.group(1), timedelta(seconds=execution_time), response]
@@ -48,6 +60,7 @@ def print_response(response):
         print(f"Chatbot: '{response[0]}'; generated in {response[1]}\n")
     else:
         print("Error! No 'Answer' present in chatbot's response: ", response[2])
+
 
 if len(sys.argv) > 1:
     response = ask_question(sys.argv[1])

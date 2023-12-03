@@ -16,20 +16,17 @@ pip install -r requirements.txt
 
 3. Set env variable `GOOGLE_API_KEY` to an api key generated in google that will have permissions to the YouTube service
 
-4. Pull all transcripts from Youtube into `transcripts/` folder
+4. Pull all transcripts from Youtube into `./data/transcripts/` folder
 ```shell
-cd pull-transcripts
-python pull-transcripts.py
+python 1_pull-transcripts.py
 ```
 
 5. Create embeddings from all transcripts and save to vector storage 
 ```shell
-cd create-embeddings
-python create-embeddings.py
+python 2_create-embeddings.py
 ```
 
 6. Run the local chatbot!
 ```shell
-cd conversational-service
-python run_llm.py
+python 3_run_llm.py
 ```

@@ -20,11 +20,16 @@ model_name = "ericzzz/falcon-rw-1b-instruct-openorca"
 model = AutoModelForCausalLM.from_pretrained(model_name)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 
-def ask_question(question):
+
+def ask_question(question, enable_vector_search):
     query_start_time = time.time()
 
-    similar_documents = chroma.similarity_search(question, top_k=3)
-    similar_documents_combined = " ".join([doc.page_content for doc in similar_documents])
+    if enable_vector_search:
+        similar_documents = chroma.similarity_search(question, top_k=3)
+        similar_documents_combined = " ".join([doc.page_content for doc in similar_documents])
+    else:
+        similar_documents = None
+        similar_documents_combined = ""
 
     pipeline = transformers.pipeline(
         'text-generation',
@@ -63,26 +68,40 @@ def print_response(response):
         print("Error! No 'Answer' present in chatbot's response: ", response[2])
 
 
-if len(sys.argv) > 1:
-    response = ask_question(sys.argv[1])
-    print_response(response)
-else:
-    print("Welcome to the chat, type 'response' to see the entire response to the previous query, "
-          "'context' to see the context or 'exit' to leave.\n")
-    response = []
-    while True:
-        user_query = input("You: ")
+def main():
+    if len(sys.argv) > 1:
+        response = ask_question(sys.argv[1], True)
+        print_response(response)
+    else:
+        print("Welcome to the chat. Type your query or one of the following commands:\n"
+              "- 'response' to see the entire response of the previous query,\n"
+              "- 'context' to see the context,\n"
+              "- 'enable' to enable vector db search,\n"
+              "- 'disable' to disable vector db search,\n"
+              "- 'exit' to leave.\n")
+        response = []
+        vector_db_search_enabled = True
+        while True:
+            user_query = input("You: ")
 
-        if user_query.lower() == 'exit':
-            print("Chatbot: Goodbye!")
-            break
-        elif user_query.lower() == 'response':
-            print(response[2] + "\n")
-        elif user_query.lower() == 'context':
-            for result in response[3]:
-                print(f"Content: '{result.page_content}'")
-                print(f"- Metadata: '{result.metadata}'")
-            print("\n")
-        else:
-            response = ask_question(user_query)
-            print_response(response)
+            if user_query.lower() == 'exit':
+                print("Chatbot: Goodbye!")
+                break
+            elif user_query.lower() == 'response':
+                print(response[2], "\n")
+            elif user_query.lower() == 'context':
+                for result in response[3]:
+                    print(f"Content: '{result.page_content}'")
+                    print(f"- Metadata: '{result.metadata}'")
+                print("\n")
+            elif user_query.lower() == 'enable':
+                vector_db_search_enabled = True
+            elif user_query.lower() == 'disable':
+                vector_db_search_enabled = False
+            else:
+                response = ask_question(user_query, vector_db_search_enabled)
+                print_response(response)
+
+
+if __name__ == "__main__":
+    main()

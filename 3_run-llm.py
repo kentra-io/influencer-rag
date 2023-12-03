@@ -51,9 +51,10 @@ def ask_question(question):
     answer = re.search(r'.*<RESP>(.*)', response[0]['generated_text'])
 
     if answer:
-        return [answer.group(1), timedelta(seconds=execution_time), response]
+        return [answer.group(1), timedelta(seconds=execution_time), response, similar_documents]
     else:
-        return ['', timedelta(seconds=execution_time), response]
+        return ['', timedelta(seconds=execution_time), response, similar_documents]
+
 
 def print_response(response):
     if response[0] != '':
@@ -66,14 +67,22 @@ if len(sys.argv) > 1:
     response = ask_question(sys.argv[1])
     print_response(response)
 else:
+    print("Welcome to the chat, type 'response' to see the entire response to the previous query, "
+          "'context' to see the context or 'exit' to leave.\n")
+    response = []
     while True:
-        print("Welcome to the chat, type 'exit' to leave.\n")
-
         user_query = input("You: ")
 
         if user_query.lower() == 'exit':
             print("Chatbot: Goodbye!")
             break
-
-        response = ask_question(user_query)
-        print_response(response)
+        elif user_query.lower() == 'response':
+            print(response[2] + "\n")
+        elif user_query.lower() == 'context':
+            for result in response[3]:
+                print(f"Content: '{result.page_content}'")
+                print(f"- Metadata: '{result.metadata}'")
+            print("\n")
+        else:
+            response = ask_question(user_query)
+            print_response(response)

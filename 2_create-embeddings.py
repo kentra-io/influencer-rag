@@ -2,11 +2,10 @@ import glob
 import json
 import logging
 
-import chromadb
-from langchain.embeddings import SentenceTransformerEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores.chroma import Chroma
-from sentence_transformers import SentenceTransformer
+
+import config
+from vector_db import chroma_provider
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -15,16 +14,7 @@ logger = logging.getLogger(__name__)
 # Define embedding dimension
 embedding_dim = 384  # Example embedding dimension, adjust as per your model
 
-# Load or create Chroma
-client = chromadb.PersistentClient(path="../chroma_db")
-client.get_or_create_collection("youtube_transcripts")
-chroma = Chroma(
-    client=client,
-    collection_name="youtube_transcripts",
-    embedding_function=SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2"),
-    persist_directory="../chroma_db"
-)
-
+chroma = chroma_provider.setup_chroma()
 
 def process_transcript(file_path):
     logger.info(f"Processing file: {file_path}")
@@ -48,6 +38,6 @@ def process_transcript(file_path):
 
 
 # Iterate over all files in the ../transcripts/* directory
-for file_path in glob.glob('../transcripts/*'):
+for file_path in glob.glob(config.transcripts_dir_path + '/*'):
     process_transcript(file_path)
     logger.info(f"Completed processing for file: {file_path}")

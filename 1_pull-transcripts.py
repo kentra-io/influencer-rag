@@ -8,6 +8,8 @@ from youtube_transcript_api import YouTubeTranscriptApi, NoTranscriptFound
 
 import config
 
+API_KEY = os.getenv('GOOGLE_API_KEY')
+
 def getUploadsPlaylistId(channel_id, youtube):
     request = youtube.channels().list(part='contentDetails', id=channel_id)
     response = request.execute()
@@ -96,12 +98,12 @@ def get_all_transcripts(channelHandle, api_key, file_path, language='en'):
 
 def main():
     for channel in config.channelYoutubeHandles:
-        parent_file_path = "../transcripts/"
+        parent_file_path = config.transcripts_dir_path
 
         if not os.path.exists(parent_file_path):
             os.makedirs(parent_file_path)
 
         file_path = f"{parent_file_path}/{channel}_transcripts.json"
-        get_all_transcripts(channel, config.API_KEY, file_path)
+        get_all_transcripts(channel, API_KEY, file_path)
 
 main()

@@ -16,7 +16,7 @@ if len(sys.argv) > 1:
     print(f"Generated the following answers in {timedelta(seconds=execution_time)}:\n")
 
     for result in results:
-        print(f"Reply: '{result.page_content}'")
+        print(f"Content: '{result.page_content}'")
         print(f"Metadata: '{result.metadata}'\n")
 else:
-    print("Please provide your prompt in first parameter")
+    print("Please provide your prompt in the first parameter")

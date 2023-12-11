@@ -16,7 +16,7 @@ chroma = chroma_provider.get_chroma()
 def process_transcript(file_path):
     logger.info(f"Processing file: {file_path}")
 
-    splitter = RecursiveCharacterTextSplitter(chunk_size=256, chunk_overlap=32)
+    splitter = RecursiveCharacterTextSplitter(chunk_size=528, chunk_overlap=64)
 
     with open(file_path, 'r') as file:
         data_list = json.load(file)

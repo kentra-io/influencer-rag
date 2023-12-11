@@ -8,19 +8,15 @@ chroma_collection_name = "youtube_transcripts"
 chroma_embedding_model = "all-MiniLM-L6-v2"
 
 
-def setup_chroma():
+def get_chroma():
     client = chromadb.PersistentClient(path=chroma_db_path)
-    client.get_or_create_collection(chroma_collection_name)
-    return Chroma(
-        client=client,
-        collection_name=chroma_collection_name,
-        embedding_function=SentenceTransformerEmbeddings(model_name=chroma_embedding_model),
-        persist_directory=chroma_db_path
+    client.get_or_create_collection(
+        name=chroma_collection_name,
+        metadata={"hnsw:space": "cosine"}
     )
 
-
-def get_chroma():
     return Chroma(
+        client=client,
         collection_name=chroma_collection_name,
         embedding_function=SentenceTransformerEmbeddings(model_name=chroma_embedding_model),
         persist_directory=chroma_db_path

@@ -1,43 +1,63 @@
-import glob
 import json
 import logging
+import os
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 import config
 from vector_db import chroma_provider
 
-# Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Define embedding dimension
-embedding_dim = 384  # Example embedding dimension, adjust as per your model
+chroma = chroma_provider.get_chroma()
 
-chroma = chroma_provider.setup_chroma()
 
 def process_transcript(file_path):
     logger.info(f"Processing file: {file_path}")
-    splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=64)
+
+    splitter = RecursiveCharacterTextSplitter(chunk_size=256, chunk_overlap=32)
 
     with open(file_path, 'r') as file:
-        data_list = json.load(file)  # Load the list of objects
+        data_list = json.load(file)
 
-        for data in data_list:  # Iterate over each object in the list
-            transcript = data['transcript']  # Extract the transcript from each object
+        for data in data_list:
+            chunks = splitter.split_text(data['transcript'])
 
-            # Split transcript into chunks
-            chunks = splitter.split_text(transcript)
+            # for doc_number, chunk in enumerate(chunks):
+            #     print(f"- {doc_number}: '{chunk}' ({len(chunk.split())})")
+            # break
 
-            for doc_number, chunk in enumerate(chunks):
-                # Add embeddings to chroma collection
-                chroma.add_texts(texts=[chunk], metadatas=[{"title": data['title']}])
-                logger.info(f"Document {doc_number} processed and added to Chroma collection")
+            video_metadata = {
+                "title": data['title'],
+                "channel": data['channel'],
+                "url": data['url']
+            }
+
+            # First chunk is the title, others follow
+            texts = [data['title']] + chunks
+            metadatas=[video_metadata] * (len(chunks) + 1)
+
+            if len(config.channelYoutubeHandles) == 1:
+                # Adds IDs, might be used to obtain related chunks;
+                # temporarily works only with one channel defined in config.py
+                ids=[str(0)] + list(map(lambda x: str(x), list(range(1, len(chunks) + 1))))
+                chroma.add_texts(texts=texts, metadatas=metadatas, ids=ids)
+            else:
+                chroma.add_texts(texts=texts, metadatas=metadatas)
+
             chroma.persist()
-            print("persisted embeddings from video: " + data['title'])
+            print(f"Added {len(chunks)} embeddings for video '{data['title']}'")
+
+def main():
+    for channel in config.channelYoutubeHandles:
+        transcript_file_path = f"{config.transcripts_dir_path}/{channel}_transcripts.json"
+        if os.path.exists(transcript_file_path):
+            process_transcript(transcript_file_path)
+            logger.info(f"Completed processing for file: {transcript_file_path}")
+        else:
+            logger.error(f"File: {transcript_file_path} does not exists")
 
 
-# Iterate over all files in the ../transcripts/* directory
-for file_path in glob.glob(config.transcripts_dir_path + '/*'):
-    process_transcript(file_path)
-    logger.info(f"Completed processing for file: {file_path}")
+if __name__ == "__main__":
+    main()

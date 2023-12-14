@@ -4,13 +4,12 @@ from datetime import timedelta
 
 from vector_db import chroma_provider
 
-chroma = chroma_provider.get_chroma()
 
-if len(sys.argv) > 1:
-    print(f"Question: '{sys.argv[1]}'\n")
+def query_chroma(chroma, prompt):
+    print(f"Question: '{prompt}'\n")
 
     start_time = time.time()
-    results = chroma.similarity_search_with_score(sys.argv[1], 5)
+    results = chroma.similarity_search_with_score(prompt, 10)
     execution_time = time.time() - start_time
 
     print(f"Generated the following answers in {timedelta(seconds=execution_time)}:\n")
@@ -23,5 +22,23 @@ if len(sys.argv) > 1:
             print(f"Metadata: '{document.metadata}'\n")
         else:
             print(f"Result irrelevant, score {score}")
-else:
-    print("Please provide your prompt in the first parameter")
+
+    print("\n")
+
+
+def main():
+    chroma = chroma_provider.get_chroma()
+
+    if len(sys.argv) > 1:
+        query_chroma(chroma, sys.argv[1])
+    else:
+        print("Entering chatbot mode. Type 'exit' to quit.")
+        while True:
+            user_input = input("Enter your prompt: ").strip()
+            if user_input.lower() == 'exit':
+                break
+            query_chroma(chroma, user_input)
+
+
+if __name__ == "__main__":
+    main()

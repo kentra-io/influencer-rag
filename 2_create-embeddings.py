@@ -16,7 +16,7 @@ chroma = chroma_provider.get_chroma()
 def process_transcript(file_path):
     logger.info(f"Processing file: {file_path}")
 
-    splitter = RecursiveCharacterTextSplitter(chunk_size=528, chunk_overlap=64)
+    splitter = RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=128)
 
     with open(file_path, 'r') as file:
         data_list = json.load(file)
@@ -31,12 +31,17 @@ def process_transcript(file_path):
             video_metadata = {
                 "title": data['title'],
                 "channel": data['channel'],
-                "url": data['url']
+                "url": data['url'],
+                "istitle": False,
+                "file": file_path
             }
+
+            video_title_metadata = video_metadata.copy()
+            video_title_metadata['istitle'] = True
 
             # First chunk is the title, others follow
             texts = [data['title']] + chunks
-            metadatas=[video_metadata] * (len(chunks) + 1)
+            metadatas=[video_title_metadata] + [video_metadata] * (len(chunks))
 
             if len(config.channelYoutubeHandles) == 1:
                 # Adds IDs, might be used to obtain related chunks;

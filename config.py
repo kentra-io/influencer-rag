@@ -1,8 +1,8 @@
 channelYoutubeHandles = [
-    # 'WesRoth',
-    # 'PromptEngineer48',
-    # 'engineerprompt',
+    'WesRoth',
+    'PromptEngineer48',
+    'engineerprompt',
     'JeffNippard'
 ]
 
-transcripts_dir_path = "data/transcripts/"
+transcripts_dir_path = "data/transcripts"

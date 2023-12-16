@@ -30,3 +30,30 @@ python 2_create-embeddings.py
 ```shell
 python 3_run_llm.py
 ```
+
+## Running  Mistral 7B with llama.cpp
+
+Tested on Apple Silicon M2 Pro, inspired by [this guide](https://medium.com/@mne/run-mistral-7b-model-on-macbook-m1-pro-with-16gb-ram-using-llama-cpp-44134694b773).
+
+1. Execute steps from 1 to 5 from the base procedure 
+
+2. Download the [quantized GGUF](https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF) version of [Mistral-7B-Instruct-v0.2](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2) from [here](https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/blob/main/mistral-7b-instruct-v0.2.Q4_K_M.gguf) and save it in _../models/_ directory.
+
+3. Install _cmake_ (use dedicated tool for your OS)
+```shell
+brew install cmake
+```
+
+4. Install _llama-cpp-python_. To get hardware acceleration architectures (e.g. CUDA), refer to _CMAKE_ARGS_ listed in the [official documentation](https://github.com/abetlen/llama-cpp-python?tab=readme-ov-file#installation-with-specific-hardware-acceleration-blas-cuda-metal-etc)
+```shell
+CMAKE_ARGS="-DLLAMA_METAL=on" FORCE_CMAKE=1 pip install --upgrade --force-reinstall llama-cpp-python --no-cache-dir
+```
+
+5. Run superfast and accurate local chatbot
+```shell
+python 3_run-llm-llama-cpp.py
+```
+or execute single prompt
+```shell
+python 3_run-llm-llama-cpp.py "Who is Sam Altman?"
+```

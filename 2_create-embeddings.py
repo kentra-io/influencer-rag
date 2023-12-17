@@ -43,7 +43,7 @@ def process_transcript(file_path):
             texts = [data['title']] + chunks
             metadatas=[video_title_metadata] + [video_metadata] * (len(chunks))
 
-            if len(config.channelYoutubeHandles) == 1:
+            if len(config.channels) == 1:
                 # Adds IDs, might be used to obtain related chunks;
                 # temporarily works only with one channel defined in config.py
                 ids=[str(0)] + list(map(lambda x: str(x), list(range(1, len(chunks) + 1))))
@@ -55,8 +55,8 @@ def process_transcript(file_path):
             print(f"Added {len(chunks)} embeddings for video '{data['title']}'")
 
 def main():
-    for channel in config.channelYoutubeHandles:
-        transcript_file_path = f"{config.transcripts_dir_path}/{channel}_transcripts.json"
+    for channel in config.channels:
+        transcript_file_path = f"{config.transcripts_dir_path}/{channel.handle}_transcripts.json"
         if os.path.exists(transcript_file_path):
             process_transcript(transcript_file_path)
             logger.info(f"Completed processing for file: {transcript_file_path}")

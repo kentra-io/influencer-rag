@@ -1,13 +1,14 @@
 import json
 import sys
 import time
+import config
 from datetime import timedelta
 
 from llama_cpp import Llama
 
 from vector_db import chroma_provider
 
-model = "../models/mistral-7b-instruct-v0.2.Q4_K_M.gguf"
+model = config.model_path
 llm = Llama(
     model_path=model,
     n_ctx=32768,

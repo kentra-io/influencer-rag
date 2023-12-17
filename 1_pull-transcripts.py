@@ -18,25 +18,7 @@ def get_uploads_playlist_id(channel_id, youtube):
     return uploads_playlist_id
 
 
-# todo: there's a bug here, if there are more channels on page (linked channels) we might pick the wrong one
-# example: handle @JeffNippard
-def scraping_get_channel_id_from_handle(handle: str):
-    if handle.find('@') == -1:
-        handle = '@' + handle
-
-    url = 'https://www.youtube.com/' + handle
-    resp = requests.get(url)
-
-    if resp.status_code == 200:
-        found = re.findall('"channelId":"([^"]*)"', resp.text)
-
-        return found[0]
-    else:
-        return False
-
-
-def get_all_transcripts(channel_handle, api_key, file_path, language='en'):
-    channel_id = scraping_get_channel_id_from_handle(channel_handle)
+def get_all_transcripts(channel_id, api_key, file_path, language='en'):
     youtube = build('youtube', 'v3', developerKey=api_key)
 
     # Start the JSON array
@@ -101,19 +83,19 @@ def get_all_transcripts(channel_handle, api_key, file_path, language='en'):
 
 
 def main():
-    for channel in config.channelYoutubeHandles:
+    for channel in config.channels:
         parent_file_path = config.transcripts_dir_path
 
         if not os.path.exists(parent_file_path):
             os.makedirs(parent_file_path)
 
-        file_path = f"{parent_file_path}/{channel}_transcripts.json"
+        file_path = f"{parent_file_path}/{channel.handle}_transcripts.json"
 
         if not os.path.exists(file_path):
-            print(f"Retrieving transcriptions for channel '{channel}':")
-            get_all_transcripts(channel, API_KEY, file_path)
+            print(f"Retrieving transcriptions for channel '{channel.handle}':")
+            get_all_transcripts(channel.id, API_KEY, file_path)
         else:
-            print(f"File '{file_path}' exists, skipping retrieval for channel '{channel}'")
+            print(f"File '{file_path}' exists, skipping retrieval for channel '{channel.handle}'")
 
 
 if __name__ == "__main__":

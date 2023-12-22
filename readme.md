@@ -57,3 +57,8 @@ or execute single prompt
 ```shell
 python 3_run-llm-llama-cpp.py "Who is Sam Altman?"
 ```
+
+# Enabling evaluations:
+- you need to provide OPENAI_API_KEY as env variable
+
+Docs: https://docs.ragas.io/en/latest/getstarted/evaluation.html

@@ -2,10 +2,12 @@ import json
 import sys
 import time
 import config
+import ragas_eval
 from datetime import timedelta
 
 from llama_cpp import Llama
 
+from model.channel import RagResponse
 from vector_db import chroma_provider
 
 model = config.model_path
@@ -56,19 +58,19 @@ def prepare_transcription_fragments(relevant_movie_chunks):
                     f"movie transcript: '{document.page_content}'; ")
 
     if len(movie_fragments_for_llm) > 0:
-        return "\n".join(movie_fragments_for_llm)
+        return movie_fragments_for_llm
     else:
         return None
 
 
-def ask_question(question, enable_vector_search):
+def ask_question(users_query, enable_vector_search):
     query_start_time = time.time()
 
     if enable_vector_search:
-        relevant_movie_chunks = chroma.similarity_search_with_score(question, 10)
-        relevant_movies = prepare_transcription_fragments(relevant_movie_chunks)
+        relevant_movie_chunks = chroma.similarity_search_with_score(users_query, 10)
+        relevant_movies_list = prepare_transcription_fragments(relevant_movie_chunks)
+        relevant_movies = "\n".join(relevant_movies_list)
     else:
-        relevant_movie_chunks = None
         relevant_movies = None
 
     if relevant_movies is not None:
@@ -82,7 +84,7 @@ def ask_question(question, enable_vector_search):
                   "in the movie library. Then answer the following question "
                   "based on your knowledge.")
 
-    prompt = f"<s>[INST] \n{system}\n [/INST]</s>\n{question}\n"
+    prompt = f"<s>[INST] \n{system}\n [/INST]</s>\n{users_query}\n"
 
     output = llm(prompt, echo=True, stream=False, max_tokens=4096)
     # TODO maybe add the stop token: stop=["</s>"]
@@ -91,20 +93,29 @@ def ask_question(question, enable_vector_search):
     execution_time = time.time() - query_start_time
 
     response = output['choices'][0]['text']
-
     answer = response.replace(prompt, '')
 
-    if answer:
-        return [answer, timedelta(seconds=execution_time), response, relevant_movie_chunks]
+    if config.evaluations_enabled and enable_vector_search and answer:
+        evaluation = ragas_eval.evaluate_question(users_query, relevant_movies_list, answer)
     else:
-        return ['', timedelta(seconds=execution_time), response, relevant_movie_chunks]
+        evaluation = None
+
+    return RagResponse(
+        query=users_query,
+        context=relevant_movies,
+        answer=answer,
+        evaluation=evaluation,
+        response_time=timedelta(seconds=execution_time)
+    )
 
 
 def print_response(response):
-    if response[0] != '':
-        print(f"Chatbot: '{response[0]}'; generated in {response[1]}\n")
+    if response.answer:
+        print(f"Chatbot: '{response.answer}'; generated in {response.response_time}\n")
+    if response.evaluation:
+        print(response.evaluation)
     else:
-        print("Error! No 'Answer' present in chatbot's response: ", response[2])
+        print("Error! No 'Answer' present in chatbot's response: ")
 
 
 def main():
@@ -127,9 +138,9 @@ def main():
                 print("Chatbot: Goodbye!")
                 break
             elif user_query.lower() == 'response':
-                print(response[2], "\n")
+                print(response.answer, "\n")
             elif user_query.lower() == 'context':
-                for chunk in response[3]:
+                for chunk in response.context:
                     document, score = chunk
                     print(f"- Content: '{document.page_content}' ({score})")
                     print(f"- Metadata: '{document.metadata}'\n")

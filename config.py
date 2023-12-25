@@ -5,5 +5,5 @@ channels = [
 ]
 
 transcripts_dir_path = "data/transcripts"
-model_path = "../privateGPT/models/mistral-7b-instruct-v0.1.Q4_K_M.gguf"
-evaluations_enabled = True  # requires env variable OPENAI_API_KEY
+model_path = "../models/mistral-7b-instruct-v0.2.Q4_K_M.gguf"
+evaluations_enabled = False

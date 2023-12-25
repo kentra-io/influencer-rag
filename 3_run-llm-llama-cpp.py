@@ -69,7 +69,10 @@ def ask_question(users_query, enable_vector_search):
     if enable_vector_search:
         relevant_movie_chunks = chroma.similarity_search_with_score(users_query, 10)
         relevant_movies_list = prepare_transcription_fragments(relevant_movie_chunks)
-        relevant_movies = "\n".join(relevant_movies_list)
+        if relevant_movies_list is not None:
+            relevant_movies = "\n".join(relevant_movies_list)
+        else:
+            relevant_movies = None
     else:
         relevant_movies = None
 
@@ -92,28 +95,29 @@ def ask_question(users_query, enable_vector_search):
 
     execution_time = time.time() - query_start_time
 
-    response = output['choices'][0]['text']
-    answer = response.replace(prompt, '')
+    llm_full_response = output['choices'][0]['text']
+    llm_user_response = llm_full_response.replace(prompt, '')
 
-    if config.evaluations_enabled and enable_vector_search and answer:
-        evaluation = ragas_eval.evaluate_question(users_query, relevant_movies_list, answer)
+    if config.evaluations_enabled and enable_vector_search and llm_user_response:
+        evaluation = ragas_eval.evaluate_question(users_query, relevant_movies_list, llm_user_response)
     else:
         evaluation = None
 
     return RagResponse(
         query=users_query,
-        context=relevant_movies,
-        answer=answer,
+        llm_user_response=llm_user_response,
+        llm_full_response=llm_full_response,
+        relevant_movie_chunks=relevant_movie_chunks,
         evaluation=evaluation,
         response_time=timedelta(seconds=execution_time)
     )
 
 
-def print_response(response):
-    if response.answer:
-        print(f"Chatbot: '{response.answer}'; generated in {response.response_time}\n")
-    if response.evaluation:
-        print(response.evaluation)
+def print_response(response: RagResponse):
+    if response.llm_user_response:
+        print(f"Chatbot: '{response.llm_user_response}'; generated in {response.response_time}\n")
+        if response.evaluation:
+            print(response.evaluation)
     else:
         print("Error! No 'Answer' present in chatbot's response: ")
 
@@ -129,8 +133,9 @@ def main():
               "- 'enable' to enable vector db search,\n"
               "- 'disable' to disable vector db search,\n"
               "- 'exit' to leave.\n")
-        response = []
+        response = None
         vector_db_search_enabled = True
+
         while True:
             user_query = input("You: ").strip()
 
@@ -138,9 +143,9 @@ def main():
                 print("Chatbot: Goodbye!")
                 break
             elif user_query.lower() == 'response':
-                print(response.answer, "\n")
+                print(response.llm_full_response, "\n")
             elif user_query.lower() == 'context':
-                for chunk in response.context:
+                for chunk in response.relevant_movie_chunks:
                     document, score = chunk
                     print(f"- Content: '{document.page_content}' ({score})")
                     print(f"- Metadata: '{document.metadata}'\n")

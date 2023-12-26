@@ -8,7 +8,9 @@ channels = [
 ]
 
 transcripts_dir_path = "data/transcripts"
-model_name = "mistral-7b-instruct-v0.2.Q4_K_M.gguf"
-# model_name = "gpt-3.5-turbo"  # Requires OPENAI_API_KEY
 local_models_path = "../models/"
 evaluations_enabled = False
+
+model_name = "mistral-7b-instruct-v0.2.Q4_K_M.gguf"
+# model_name = "gpt-3.5-turbo"  # Requires OPENAI_API_KEY
+# model_name = "ericzzz/falcon-rw-1b-instruct-openorca"

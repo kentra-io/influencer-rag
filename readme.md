@@ -1,4 +1,5 @@
 # How to run
+## Prerequisites
 1. 🐍 Install [conda](https://www.anaconda.com/download) for virtual environment management. Create and activate a new virtual environment.
 
 ```shell
@@ -26,12 +27,7 @@ python 1_pull-transcripts.py
 python 2_create-embeddings.py
 ```
 
-6. Run the local chatbot!
-```shell
-python 3_run_llm.py
-```
-
-## Running  Mistral 7B with llama.cpp
+## Running chatbot on Mistral 7B with llama.cpp
 
 Tested on Apple Silicon M2 Pro, inspired by [this guide](https://medium.com/@mne/run-mistral-7b-model-on-macbook-m1-pro-with-16gb-ram-using-llama-cpp-44134694b773).
 
@@ -49,13 +45,41 @@ brew install cmake
 CMAKE_ARGS="-DLLAMA_METAL=on" FORCE_CMAKE=1 pip install --upgrade --force-reinstall llama-cpp-python --no-cache-dir
 ```
 
-5. Run superfast and accurate local chatbot
+5. Run local Mistral 7B chatbot
 ```shell
 python 3_run-llm-llama-cpp.py
 ```
 or execute single prompt
 ```shell
 python 3_run-llm-llama-cpp.py "Who is Sam Altman?"
+```
+
+The code was written for Mistral 7B, but any other GGUF model should also work. Just download the model to `../models/` and update `model_name` in `config.py`.
+
+## Other LLM providers
+The default configuration runs llama-cpp, however there are 2 more implementations allowing to run LLMs from different vendors.
+
+### OpenAI
+Running LLM from OpenAI API is the first option. Please follow the steps to run:
+
+1. Update the `model_name` in `config.py` to one of OpenAI models (currently, only _gpt-3.5-turbo_ was tested)
+2. Add `OPENAI_API_KEY` variable with your API Key
+3. Make sure `openai` is installed (should be already there as one of the existing transitive dependencies)
+```shell
+pip install openai
+```
+
+5. Run OpenAI chatbot
+```shell
+python 3_run-llm-llama-cpp.py
+```
+
+### HF Transformers
+1. Update the `model_name` in `config.py` to one of HF Transformers models (e.g.  _ericzzz/falcon-rw-1b-instruct-openorca_)
+
+2. Run local chatbot with HF Transformers
+```shell
+python 3_run-llm-llama-cpp.py
 ```
 
 ## Enabling evaluations

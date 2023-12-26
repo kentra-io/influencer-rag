@@ -1,28 +1,17 @@
 import json
 import sys
 import time
-import config
-import ragas_eval
 from datetime import timedelta
 
-from llama_cpp import Llama
-
-from model.channel import RagResponse
+import config
+import ragas_eval
+from llm_model.llm_model_factory import get_llm_model
+from model.rag_response import RagResponse
 from vector_db import chroma_provider
 
-model = config.model_path
-llm = Llama(
-    model_path=model,
-    n_ctx=32768,
-    # n_ctx=8192 for machines with less RAM
-    n_batch=512,
-    n_threads=7,
-    n_gpu_layers=2,
-    verbose=False,
-    seed=42
-)
-
 chroma = chroma_provider.get_chroma()
+
+llm_model = get_llm_model(config.model_name, config.local_models_path)
 
 
 def read_full_movie_transcript(file_path, movie_title):
@@ -67,7 +56,7 @@ def ask_question(users_query, enable_vector_search):
     query_start_time = time.time()
 
     if enable_vector_search:
-        relevant_movie_chunks = chroma.similarity_search_with_score(users_query, 10)
+        relevant_movie_chunks = chroma.similarity_search_with_score(users_query, 2)
         relevant_movies_list = prepare_transcription_fragments(relevant_movie_chunks)
         if relevant_movies_list is not None:
             relevant_movies = "\n".join(relevant_movies_list)
@@ -87,16 +76,13 @@ def ask_question(users_query, enable_vector_search):
                   "in the movie library. Then answer the following question "
                   "based on your knowledge.")
 
-    prompt = f"<s>[INST] \n{system}\n [/INST]</s>\n{users_query}\n"
+    llm_model_response = (
+        llm_model.get_model_response(system, users_query))
 
-    output = llm(prompt, echo=True, stream=False, max_tokens=4096)
-    # TODO maybe add the stop token: stop=["</s>"]
-    # print(f"output: {output}")
+    llm_user_response = llm_model_response.llm_user_response
+    llm_full_response = llm_model_response.llm_full_response
 
     execution_time = time.time() - query_start_time
-
-    llm_full_response = output['choices'][0]['text']
-    llm_user_response = llm_full_response.replace(prompt, '')
 
     if config.evaluations_enabled and enable_vector_search and llm_user_response:
         evaluation = ragas_eval.evaluate_question(users_query, relevant_movies_list, llm_user_response)

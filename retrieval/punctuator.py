@@ -90,7 +90,20 @@ def process_segment(words, tokenizer, model, start_word):
 def punctuate(text, tokenizer, model):
     text = text.lower()
     text = text.replace('\n', ' ')
+
+    chars_to_remove = ['.', ',', '…']
+    for char in chars_to_remove:
+        text = text.replace(char, '')
+
     words = text.split(' ')
+
+    # Remove adjacent word duplicates
+    i = 1
+    while i < len(words):
+        if words[i] == words[i - 1]:
+            del words[i]
+        else:
+            i += 1
 
     overlap = 50
     slices = split_to_segments(words, 150, 50)

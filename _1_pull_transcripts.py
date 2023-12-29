@@ -1,8 +1,6 @@
 import json
 import os
-import re
 
-import requests
 from googleapiclient.discovery import build
 from youtube_transcript_api import YouTubeTranscriptApi, NoTranscriptFound
 

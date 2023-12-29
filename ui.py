@@ -19,7 +19,8 @@ if prompt := st.chat_input("What is up?"):
 
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
-    response = ask_question(users_query=prompt, enable_vector_search=True)
+    with st.spinner("Thinking..."):
+        response = ask_question(users_query=prompt, enable_vector_search=True)
 
     # Display assistant response in chat message container
     with st.chat_message("assistant"):
@@ -29,10 +30,10 @@ if prompt := st.chat_input("What is up?"):
     for chunk in response.relevant_movie_chunks:
         with st.expander("Show chunk"):
             document, score = chunk
-            st.write("*Title*", document.metadata['title'])
-            st.write(document.metadata['url'])
-            st.write(document.page_content)
+            st.markdown("### " + document.metadata['title'])
+            st.video(document.metadata['url'])
             st.write(score)
+            st.write(document.page_content)
 
     # Add assistant response to chat history
     st.session_state.messages.append(

@@ -2,9 +2,11 @@ import streamlit as st
 
 from _3_run_llm_llama_cpp import ask_question
 
-# Initialize chat history
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+# Sidebar Configuration
+with st.sidebar:
+    st.title("▶️ Influencer RAG")
+    top_k = st.slider("Top-k", min_value=1, max_value=50, value=3)
+
 
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
@@ -20,7 +22,7 @@ if prompt := st.chat_input("What is up?"):
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.spinner("Thinking..."):
-        response = ask_question(users_query=prompt, enable_vector_search=True)
+        response = ask_question(users_query=prompt, enable_vector_search=True, k=top_k)
 
     # Display assistant response in chat message container
     with st.chat_message("assistant"):

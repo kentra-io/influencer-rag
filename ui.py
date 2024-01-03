@@ -8,6 +8,21 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+
+def render_response(entry):
+    with st.chat_message("assistant"):
+        st.markdown(entry["assistant_response"])
+
+    for title, url, score, page_content, paragraph in entry["chunks"]:
+        with st.expander(f"Show chunk: {title}"):
+            st.video(url)
+            st.write(score)
+            st.subheader("Found sentence")
+            st.write(page_content)
+            st.subheader("Paragraph sent to LLM as context")
+            st.write(paragraph)
+
+
 # Sidebar Configuration
 with st.sidebar:
     st.title("▶️ Influencer RAG")
@@ -21,14 +36,7 @@ for entry in st.session_state.chat_history:
     with st.chat_message("user"):
         st.markdown(entry["user_prompt"])
 
-    with st.chat_message("assistant"):
-        st.markdown(entry["assistant_response"])
-
-    for title, url, score, page_content in entry["chunks"]:
-        with st.expander(f"Show chunk: {title}"):
-            st.video(url)
-            st.write(score)
-            st.write(page_content)
+    render_response(entry)
 
 # User Input and Chat Logic
 if prompt := st.chat_input("What is up?"):
@@ -48,19 +56,13 @@ if prompt := st.chat_input("What is up?"):
                 document.metadata["url"],
                 score,
                 document.page_content,
+                document.metadata['paragraph'],
             )
             for document, score in response.relevant_movie_chunks
         ],
     }
 
-    with st.chat_message("assistant"):
-        st.markdown(new_chat_entry["assistant_response"])
-
-    for title, url, score, page_content in new_chat_entry["chunks"]:
-        with st.expander(f"Show chunk: {title}"):
-            st.video(url)
-            st.write(score)
-            st.write(page_content)
+    render_response(new_chat_entry)
 
     # Append to chat history
     st.session_state.chat_history.append(new_chat_entry)

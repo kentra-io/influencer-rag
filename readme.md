@@ -92,3 +92,16 @@ pip install ragas
 
 2. Provide `OPENAI_API_KEY` as env variable
 3. Enable evaluation in _config.py_ by setting `evaluations_enabled` to `True`
+
+
+## Using Streamlit UI
+
+1. Install streamlit
+```shell
+pip install streamlit
+```
+
+2. Run streamlit app
+```shell
+streamlit run ui.py
+```

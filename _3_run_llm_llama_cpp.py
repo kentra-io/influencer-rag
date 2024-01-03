@@ -52,11 +52,11 @@ def prepare_transcription_fragments(relevant_movie_chunks):
         return None
 
 
-def ask_question(users_query, enable_vector_search):
+def ask_question(users_query, enable_vector_search, k=config.k):
     query_start_time = time.time()
 
     if enable_vector_search:
-        relevant_movie_chunks = chroma.similarity_search_with_score(users_query, 2)
+        relevant_movie_chunks = chroma.similarity_search_with_score(users_query, k)
         relevant_movies_list = prepare_transcription_fragments(relevant_movie_chunks)
         if relevant_movies_list is not None:
             relevant_movies = "\n".join(relevant_movies_list)

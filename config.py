@@ -8,11 +8,15 @@ channels = [
 ]
 
 transcripts_dir_path = "data/transcripts"
+evaluations_dir_path = "data/evaluations"
 local_models_path = "../models/"
 evaluations_enabled = False
 
 k = 2
 
-model_name = "mistral-7b-instruct-v0.2.Q4_K_M.gguf"
-# model_name = "gpt-3.5-turbo-1106"  # Requires OPENAI_API_KEY
+# disable parallelism for tokenizers to silence the warnings
+TOKENIZERS_PARALLELISM=False
+
+# model_name = "mistral-7b-instruct-v0.2.Q4_K_M.gguf"
+model_name = "gpt-3.5-turbo"  # Requires OPENAI_API_KEY
 # model_name = "ericzzz/falcon-rw-1b-instruct-openorca"

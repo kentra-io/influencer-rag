@@ -18,5 +18,5 @@ k = 2
 TOKENIZERS_PARALLELISM=False
 
 # model_name = "mistral-7b-instruct-v0.2.Q4_K_M.gguf"
-model_name = "gpt-3.5-turbo"  # Requires OPENAI_API_KEY
+model_name = "gpt-3.5-turbo-1106"  # Requires OPENAI_API_KEY
 # model_name = "ericzzz/falcon-rw-1b-instruct-openorca"

@@ -1,4 +1,3 @@
-import json
 import os
 import sys
 import time
@@ -21,37 +20,18 @@ chroma = chroma_provider.get_chroma()
 llm_model = get_llm_model(config.model_name, config.local_models_path)
 
 
-def read_full_movie_transcript(file_path, movie_title):
-    with open(file_path, 'r') as file:
-        movies = json.load(file)
-
-    for movie in movies:
-        if movie['title'] == movie_title:
-            return movie['transcript']
-
-    return None
-
-
 def prepare_transcription_fragments(relevant_movie_chunks):
     movie_fragments_for_llm = []
-    full_movies_already_added = []
 
     for movie_chunk in relevant_movie_chunks:
         document, score = movie_chunk
 
-        if score < 0.5:
+        if score < 0.6:
             movie_metadata = document.metadata
-
-            if movie_metadata['istitle'] and (movie_metadata['title'] not in full_movies_already_added):
-                movie_fragments_for_llm.append(
-                    f"Movie title: '{movie_metadata['title']}', "
-                    f"movie transcript: "
-                    f"'{read_full_movie_transcript(movie_metadata['file'], movie_metadata['title'])}'; ")
-                full_movies_already_added.append(movie_metadata['title'])
-            elif not movie_metadata['istitle']:
-                movie_fragments_for_llm.append(
-                    f"Movie title: '{movie_metadata['title']}', "
-                    f"movie transcript: '{document.page_content}'; ")
+            movie_fragments_for_llm.append(
+                f"Movie title: '{movie_metadata['title']}', "
+                f"movie transcript: '{movie_metadata['paragraph']}'; ")
+            # '{document.page_content}' is the chunk
 
     if len(movie_fragments_for_llm) > 0:
         return movie_fragments_for_llm

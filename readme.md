@@ -83,16 +83,7 @@ python 3_run-llm-llama-cpp.py
 ```
 
 ## Enabling evaluations
-Output evaluation with [Ragas](https://docs.ragas.io/en/latest/getstarted/evaluation.html).
-
-1. install the library
-```shell
-pip install ragas
-```
-
-2. Provide `OPENAI_API_KEY` as env variable
-3. Enable evaluation in _config.py_ by setting `evaluations_enabled` to `True`
-
+Evaluations have a separate [readme](evaluations/readme.md)
 
 ## Using Streamlit UI
 

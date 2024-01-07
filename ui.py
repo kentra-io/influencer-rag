@@ -1,5 +1,5 @@
 import streamlit as st
-from _3_run_llm_llama_cpp import ask_question
+from _3_run_llm_llama_cpp import process_question
 
 # Streamlit Page Configuration
 st.set_page_config(
@@ -44,7 +44,7 @@ if prompt := st.chat_input("What is up?"):
         st.markdown(prompt)
 
     with st.spinner("Thinking..."):
-        response = ask_question(users_query=prompt, enable_vector_search=True, k=top_k)
+        response = process_question(users_query=prompt, enable_vector_search=True, k=top_k)
 
     # Prepare new chat entry with response and chunks
     new_chat_entry = {

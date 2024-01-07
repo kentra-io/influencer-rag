@@ -1,15 +1,22 @@
+import os
 import sys
 import time
 from datetime import timedelta
 
 import config
-import ragas_eval
+from evaluations import evaluations
+from evaluations.evaluations import persist_evaluation
 from llm_model.llm_model_factory import get_llm_model
 from model.rag_response import RagResponse
 from vector_db import chroma_provider
 
-chroma = chroma_provider.get_chroma()
 
+def init():
+    os.putenv("TOKENIZERS_PARALLELISM", str(config.TOKENIZERS_PARALLELISM))
+
+
+init()
+chroma = chroma_provider.get_chroma()
 llm_model = get_llm_model(config.model_name, config.local_models_path)
 
 
@@ -65,7 +72,7 @@ def ask_question(users_query, enable_vector_search, k=config.k):
     execution_time = time.time() - query_start_time
 
     if config.evaluations_enabled and enable_vector_search and llm_user_response:
-        evaluation = ragas_eval.evaluate_question(users_query, relevant_movies_list, llm_user_response)
+        evaluation = evaluations.evaluate_question(users_query, relevant_movies_list, llm_user_response)
     else:
         evaluation = None
 
@@ -79,6 +86,15 @@ def ask_question(users_query, enable_vector_search, k=config.k):
     )
 
 
+def process_question(users_query, enable_vector_search, k=config.k):
+    response = ask_question(users_query, enable_vector_search, k)
+
+    if response.evaluation:
+        persist_evaluation(response, k)
+
+    return response
+
+
 def print_response(response: RagResponse):
     if response.llm_user_response:
         print(f"Chatbot: '{response.llm_user_response}'; generated in {response.response_time}\n")
@@ -90,7 +106,7 @@ def print_response(response: RagResponse):
 
 def main():
     if len(sys.argv) > 1:
-        response = ask_question(sys.argv[1], True)
+        response = process_question(sys.argv[1], True)
         print_response(response)
     else:
         print("Welcome to the chat. Type your query or one of the following commands:\n"
@@ -120,7 +136,7 @@ def main():
             elif user_query.lower() == 'disable':
                 vector_db_search_enabled = False
             else:
-                response = ask_question(user_query, vector_db_search_enabled)
+                response = process_question(user_query, vector_db_search_enabled)
                 print_response(response)
 
 

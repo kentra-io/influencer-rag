@@ -215,6 +215,23 @@ def create_tiles(sentences, model=default_embedding_model):
     return [c[0] for c in tiles] + [tiles[-1][-1]]
 
 
+def create_paragraphs(sentences, model=default_embedding_model):
+    tiles = create_tiles(sentences, model)
+
+    paragraphs = []
+    current_par = ""
+    for i, sentence in enumerate(sentences):
+        current_par += " " + sentence
+
+        if i + 1 in tiles[1:-1]:
+            paragraphs.append(current_par)
+            current_par = ""
+
+    paragraphs.append(current_par)
+
+    return paragraphs
+
+
 def tiling_score(master, candidate):
     """
     This function calculates the tiling score between a master list and a candidate list.
@@ -261,6 +278,7 @@ def tiling_score(master, candidate):
     return (1 - distance) * num_penalty
 
 
+# TODO This should be a unit test
 def main():
     filename = "text_short_chatgpt_banned.txt"
     # filename = "text_medium_sam_altman_fired_from_openai.txt"
@@ -276,27 +294,15 @@ def main():
     sentences = get_sentences(text)
 
     query_start_time = time.time()
-    tiles = create_tiles(sentences, embedding_model)
-    # Returns e.g. [0, 5, 11, 14], first sentences for new paragraphs
+    paragraphs = create_paragraphs(sentences, embedding_model)
     execution_time = time.time() - query_start_time
 
     print("Generation time: " + str(timedelta(seconds=execution_time)) + "\n")
 
     print(bold("Original"))
     print("\n" + text + "\n")
-    print(bold("Clustered (paragraph thresholds " + str(tiles) + ")\n"))
 
-    paragraphs = []
-    current_par = ""
-    for i, sentence in enumerate(sentences):
-        current_par += " " + sentence + f" ({blue(i)})"
-
-        if i + 1 in tiles[1:-1]:
-            paragraphs.append(current_par)
-            current_par = ""
-
-    paragraphs.append(current_par)
-
+    print(bold("Clustered\n"))
     for paragraph in paragraphs:
         print(paragraph + f" [len {red(len(paragraph))}] \n")
 

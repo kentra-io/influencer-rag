@@ -6,7 +6,7 @@ from datetime import timedelta
 
 import config
 from retrieval.punctuator import punctuate
-from retrieval.tiler import get_sentences, create_tiles
+from retrieval.tiler import get_sentences, create_paragraphs
 from utils.console_utils import bold
 from vector_db import chroma_provider
 
@@ -32,20 +32,7 @@ def process_transcript(file_path):
 
                 transcript_sentences = get_sentences(punctuated_transcript)
 
-                tiles = create_tiles(transcript_sentences)
-
-                # TODO Move to a separate method or update create_tiles method
-                paragraphs = []
-                current_par = ""
-                for i, sentence in enumerate(transcript_sentences):
-                    current_par += " " + sentence
-
-                    if i + 1 in tiles[1:-1]:
-                        paragraphs.append(current_par)
-                        current_par = ""
-
-                paragraphs.append(current_par)
-                # End
+                paragraphs = create_paragraphs(transcript_sentences)
 
                 tiling_time = time.time() - tiling_start_time
 

@@ -6,3 +6,4 @@ sentence_transformers==2.2.2
 transformers==4.35.2
 youtube_transcript_api==0.6.1
 streamlit==1.29.0
+ragas==0.0.22

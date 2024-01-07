@@ -1,7 +1,8 @@
 import os
 
 
-def createFolderIfNotExists(parent_file_path):
-    if not os.path.exists(parent_file_path):
-        os.makedirs(parent_file_path)
+def createFolderIfNotExists(file_path: str):
+    directory = os.path.dirname(file_path)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 

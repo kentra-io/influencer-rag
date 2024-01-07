@@ -106,6 +106,15 @@ def ask_question(users_query, enable_vector_search, k=config.k):
     )
 
 
+def process_question(users_query, enable_vector_search, k=config.k):
+    response = ask_question(users_query, enable_vector_search, k)
+
+    if response.evaluation:
+        persist_evaluation(response, k)
+
+    return response
+
+
 def print_response(response: RagResponse):
     if response.llm_user_response:
         print(f"Chatbot: '{response.llm_user_response}'; generated in {response.response_time}\n")
@@ -117,7 +126,8 @@ def print_response(response: RagResponse):
 
 def main():
     if len(sys.argv) > 1:
-        process_question(sys.argv[1], True)
+        response = process_question(sys.argv[1], True)
+        print_response(response)
     else:
         print("Welcome to the chat. Type your query or one of the following commands:\n"
               "- 'response' to see the entire response of the previous query,\n"
@@ -146,15 +156,8 @@ def main():
             elif user_query.lower() == 'disable':
                 vector_db_search_enabled = False
             else:
-                process_question(user_query, vector_db_search_enabled)
-
-
-def process_question(users_query, enable_vector_search, k=config.k):
-    response = ask_question(users_query, enable_vector_search, k)
-    if response.evaluation:
-        persist_evaluation(response, k)
-    print_response(response)
-    return response
+                response = process_question(user_query, vector_db_search_enabled)
+                print_response(response)
 
 
 if __name__ == "__main__":

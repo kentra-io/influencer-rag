@@ -7,6 +7,8 @@ from datasets import Dataset
 from ragas.metrics import context_precision, faithfulness, answer_relevancy
 
 import config
+from common import file_utils
+from common.file_utils import createFolderIfNotExists
 from evaluations.model.evaluation import Evaluation
 from evaluations.model.rag_configuration import RagConfiguration
 from model.rag_response import RagResponse
@@ -52,28 +54,38 @@ def evaluate_question(query, context, answer):
 
 # add entry to questions.csv if there is no entry with given query
 def persist_question(channel_handle, query):
-    with open(f"{config.evaluations_dir_path}/{channel_handle}/questions.csv") as questions_file:
-        is_query_present = is_query_present_in_file(questions_file, query)
-    print("is_query_present: " + str(is_query_present))
-    if not is_query_present:
-        with open(f"{config.evaluations_dir_path}/{channel_handle}/questions.csv", "a") as questions_file:
+    questions_file_path = f"{config.evaluations_dir_path}/{channel_handle}/questions.csv"
+    if not is_query_present(questions_file_path, query):
+        with open(questions_file_path, "a") as questions_file:
             writer = csv.DictWriter(questions_file, fieldnames=["query", "ground_truth"], quoting=csv.QUOTE_NONNUMERIC,
                                     restval="")
             writer.writerow({"query": query})
 
 
-def is_query_present_in_file(file: IO, query):
-    reader = csv.DictReader(file)
-    for row in reader:
-        if row["query"] == query:
-            return True
-    return False
+def is_query_present(questions_file_path, query):
+    if not os.path.exists(questions_file_path):
+        createFolderIfNotExists(questions_file_path)
+        with open(questions_file_path, "w") as questions_file:
+            writer = csv.DictWriter(questions_file, fieldnames=["query", "ground_truth"], quoting=csv.QUOTE_NONNUMERIC,
+                                    restval="")
+            writer.writeheader()
+        return False
+    else:
+        with open(questions_file_path) as questions_file:
+            reader = csv.DictReader(questions_file)
+            query_present = False
+            for row in reader:
+                if row["query"] == query:
+                    query_present = True
+        print("is_query_present: " + str(is_query_present))
+        return query_present
 
 
 def persist_single_evaluation_result(channel_handle, rag_response: RagResponse):
     label = rag_response.evaluation.rag_configuration.get_label()
     joined_context = join_context(rag_response.relevant_movie_chunks)
     file_path = f"{config.evaluations_dir_path}/{channel_handle}/evaluations_{label}.csv"
+    file_utils.createFolderIfNotExists(file_path)
     file_exists = os.path.exists(file_path)
     with open(file_path, "a") as evaluation_results_file:
         object_to_persist = {

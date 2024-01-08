@@ -1,4 +1,12 @@
+from dataclasses import dataclass
+
 from model.channel import Channel
+from vector_db.vector_db_model import VectorDbType
+
+
+@dataclass
+class VectorDbConfig:
+    max_score: int
 
 channels = [
     Channel('WesRoth', 'UCqcbQf6yw5KzRoDDcZ_wBSw'),
@@ -6,6 +14,12 @@ channels = [
     Channel('engineerprompt', 'UCDq7SjbgRKty5TgGafW8Clg'),
     # Channel('BenFelixCSI', 'UCDXTQ8nWmx_EhZ2v-kp7QxA')
 ]
+
+default_vector_db = VectorDbType.ELASTICSEARCH
+vector_db_configs = {
+    VectorDbType.CHROMA: VectorDbConfig(0.6),
+    VectorDbType.ELASTICSEARCH: VectorDbConfig(0.9)
+}
 
 transcripts_dir_path = "data/transcripts"
 evaluations_dir_path = "data/evaluations"

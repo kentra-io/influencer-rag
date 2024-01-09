@@ -8,8 +8,7 @@ from evaluations import evaluations
 from evaluations.evaluations import persist_evaluation
 from llm_model.llm_model_factory import get_llm_model
 from model.rag_response import RagResponse
-from vector_db import chroma_provider
-from vector_db.vector_db_model import get_vector_db_model
+from vector_db.vector_db_model import get_vector_db
 
 
 def init():
@@ -20,13 +19,13 @@ init()
 llm_model = get_llm_model(config.model_name, config.local_models_path)
 
 
-def prepare_transcription_fragments(relevant_movie_chunks):
+def prepare_transcription_fragments(relevant_movie_chunks, max_score: int):
     movie_fragments_for_llm = []
 
     for movie_chunk in relevant_movie_chunks:
         document, score = movie_chunk
 
-        if score < 0.6:
+        if score < max_score:
             movie_metadata = document.metadata
             movie_fragments_for_llm.append(
                 f"Movie title: '{movie_metadata['title']}', "
@@ -43,9 +42,12 @@ def ask_question(users_query, enable_vector_search, k=config.k, vector_db=config
     query_start_time = time.time()
 
     if enable_vector_search:
-        vector_db_model = get_vector_db_model(vector_db)
+        vector_db_model = get_vector_db(vector_db)
         relevant_movie_chunks = vector_db_model.similarity_search_with_score(users_query, k)
-        relevant_movies_list = prepare_transcription_fragments(relevant_movie_chunks)
+        relevant_movies_list = prepare_transcription_fragments(
+            relevant_movie_chunks,
+            config.vector_db_configs[vector_db].max_score
+        )
         if relevant_movies_list is not None:
             relevant_movies = "\n".join(relevant_movies_list)
         else:

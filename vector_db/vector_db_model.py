@@ -7,9 +7,6 @@ from langchain.schema.vectorstore import VectorStore
 from vector_db.chroma_provider import get_chroma
 from vector_db.elasticsearch_provider import get_elasticsearch
 
-vector_dbs = {}
-
-
 class VectorDbType(Enum):
     ELASTICSEARCH = "ElasticSearch"
     CHROMA = "Chroma"
@@ -34,16 +31,8 @@ class VectorDb(ABC):
             self.vector_store.persist()
 
 
-def get_vector_db_model(vector_db: VectorDbType) -> VectorDb:
-    vector_db_model = vector_dbs.get(vector_db)
-    if vector_db_model is None:
-        vector_db_model = create_vector_db_model(vector_db)
-        vector_dbs[VectorDbType] = vector_db_model
-    return vector_db_model
-
-
-def create_vector_db_model(vector_db: VectorDbType) -> VectorDb:
+def get_vector_db(vector_db: VectorDbType) -> VectorDb:
     if vector_db == VectorDbType.ELASTICSEARCH:
         return VectorDb(VectorDbType.ELASTICSEARCH, get_elasticsearch())
     elif vector_db == VectorDbType.CHROMA:
-        return VectorDb(VectorDbType.ELASTICSEARCH, get_chroma())
+        return VectorDb(VectorDbType.CHROMA, get_chroma())

@@ -2,25 +2,25 @@ import json
 import logging
 import os
 
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+import time
+from datetime import timedelta
 
 import config
 from retrieval.punctuator import punctuate
 from retrieval.tiler import get_sentences, create_paragraphs
 from utils.console_utils import bold
-from vector_db.chroma_provider import get_chroma
-from vector_db.vector_db_model import get_vector_db_model
+from vector_db.vector_db_model import get_vector_db
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
+vector_db_model = get_vector_db(config.default_vector_db)
 
 def process_transcript(file_path):
     logger.info(f"Processing file: {file_path}")
 
     with open(file_path, 'r') as file:
         data_list = json.load(file)
-
-        vector_db_model = get_vector_db_model(config.default_vector_db)
 
         for data in data_list:
             try:

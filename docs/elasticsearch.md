@@ -7,10 +7,15 @@ Navigate to `Dev Tools` -> `Console` to run ES queries.
 
 ### Query all embeddings
 ```json
-GET test_index3/_search
+GET youtube_transcripts/_search
 {
   "query": {
     "match_all": {}
   }
 }
+```
+
+### Delete index
+```json
+DELETE youtube_transcripts/
 ```

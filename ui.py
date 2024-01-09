@@ -1,5 +1,6 @@
 import streamlit as st
 from _3_run_llm_llama_cpp import process_question
+from vector_db.vector_db_model import VectorDbType
 
 # Streamlit Page Configuration
 st.set_page_config(
@@ -8,6 +9,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+vector_databases = [member.value for member in VectorDbType]
 
 def render_response(entry):
     with st.chat_message("assistant"):
@@ -27,6 +29,7 @@ def render_response(entry):
 with st.sidebar:
     st.title("▶️ Influencer RAG")
     top_k = st.slider("Top-k", min_value=1, max_value=50, value=3)
+    vector_db = st.selectbox('Select Vector DB', vector_databases)
 
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
@@ -44,7 +47,12 @@ if prompt := st.chat_input("What is up?"):
         st.markdown(prompt)
 
     with st.spinner("Thinking..."):
-        response = process_question(users_query=prompt, enable_vector_search=True, k=top_k)
+        response = process_question(
+            users_query=prompt,
+            enable_vector_search=True,
+            k=top_k,
+            vector_db=VectorDbType(vector_db)
+        )
 
     # Prepare new chat entry with response and chunks
     new_chat_entry = {

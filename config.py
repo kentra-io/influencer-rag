@@ -15,7 +15,7 @@ channels = [
     # Channel('BenFelixCSI', 'UCDXTQ8nWmx_EhZ2v-kp7QxA')
 ]
 
-default_vector_db = VectorDbType.ELASTICSEARCH
+default_vector_db = VectorDbType.CHROMA
 vector_db_configs = {
     VectorDbType.CHROMA: VectorDbConfig(0.6),
     VectorDbType.ELASTICSEARCH: VectorDbConfig(0.9)

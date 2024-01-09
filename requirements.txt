@@ -1,5 +1,6 @@
 chromadb==0.4.18
 google_api_python_client==2.108.0
+en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl
 langchain==0.0.340
 requests==2.31.0
 sentence_transformers==2.2.2

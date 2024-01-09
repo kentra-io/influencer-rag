@@ -9,6 +9,7 @@ from evaluations.evaluations import persist_evaluation
 from llm_model.llm_model_factory import get_llm_model
 from model.rag_response import RagResponse
 from vector_db import chroma_provider
+from vector_db.vector_db_model import get_vector_db_model
 
 
 def init():
@@ -16,7 +17,6 @@ def init():
 
 
 init()
-chroma = chroma_provider.get_chroma()
 llm_model = get_llm_model(config.model_name, config.local_models_path)
 
 
@@ -39,11 +39,12 @@ def prepare_transcription_fragments(relevant_movie_chunks):
         return None
 
 
-def ask_question(users_query, enable_vector_search, k=config.k):
+def ask_question(users_query, enable_vector_search, k=config.k, vector_db=config.default_vector_db):
     query_start_time = time.time()
 
     if enable_vector_search:
-        relevant_movie_chunks = chroma.similarity_search_with_score(users_query, k)
+        vector_db_model = get_vector_db_model(vector_db)
+        relevant_movie_chunks = vector_db_model.similarity_search_with_score(users_query, k)
         relevant_movies_list = prepare_transcription_fragments(relevant_movie_chunks)
         if relevant_movies_list is not None:
             relevant_movies = "\n".join(relevant_movies_list)
@@ -86,8 +87,8 @@ def ask_question(users_query, enable_vector_search, k=config.k):
     )
 
 
-def process_question(users_query, enable_vector_search, k=config.k):
-    response = ask_question(users_query, enable_vector_search, k)
+def process_question(users_query, enable_vector_search, k=config.k, vector_db=config.default_vector_db):
+    response = ask_question(users_query, enable_vector_search, k, vector_db=vector_db)
 
     if response.evaluation:
         persist_evaluation(response, k)

@@ -29,6 +29,10 @@ class VectorDb(ABC):
     def similarity_search_with_score(self, users_query, k):
         return self.vector_store.similarity_search_with_score(users_query, k)
 
+    def persist(self):
+        if (self.vector_db_type == VectorDbType.CHROMA):
+            self.vector_store.persist()
+
 
 def get_vector_db_model(vector_db: VectorDbType) -> VectorDb:
     vector_db_model = vector_dbs.get(vector_db)

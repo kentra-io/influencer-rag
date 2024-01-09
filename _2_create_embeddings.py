@@ -8,6 +8,7 @@ import config
 from retrieval.punctuator import punctuate
 from retrieval.tiler import get_sentences, create_paragraphs
 from utils.console_utils import bold
+from vector_db.chroma_provider import get_chroma
 from vector_db.vector_db_model import get_vector_db_model
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -18,6 +19,8 @@ def process_transcript(file_path):
 
     with open(file_path, 'r') as file:
         data_list = json.load(file)
+
+        vector_db_model = get_vector_db_model(config.default_vector_db)
 
         for data in data_list:
             try:
@@ -56,7 +59,7 @@ def process_transcript(file_path):
 
                     vector_db_model.add_texts(texts=chunks, metadatas=metadata)
 
-                chroma.persist()
+                vector_db_model.persist()
 
             except Exception as e:
                 logger.error(f"Unknown exception has been raised, skipping the transcript: {e}", exc_info=True)

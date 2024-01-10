@@ -6,7 +6,7 @@ from vector_db.vector_db_model import VectorDbType
 
 @dataclass
 class VectorDbConfig:
-    max_score: int
+    max_score: float
 
 channels = [
     Channel('WesRoth', 'UCqcbQf6yw5KzRoDDcZ_wBSw'),
@@ -15,10 +15,13 @@ channels = [
     # Channel('BenFelixCSI', 'UCDXTQ8nWmx_EhZ2v-kp7QxA')
 ]
 
+# In theory should be the same for all cosine similarity searches
+max_score_threshold = 0.6
+
 default_vector_db = VectorDbType.CHROMA
 vector_db_configs = {
-    VectorDbType.CHROMA: VectorDbConfig(0.6),
-    VectorDbType.ELASTICSEARCH: VectorDbConfig(0.9)
+    VectorDbType.CHROMA: VectorDbConfig(max_score_threshold),
+    VectorDbType.ELASTICSEARCH: VectorDbConfig(max_score_threshold)
 }
 
 transcripts_dir_path = "data/transcripts"

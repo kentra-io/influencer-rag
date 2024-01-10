@@ -19,7 +19,7 @@ init()
 llm_model = get_llm_model(config.model_name, config.local_models_path)
 
 
-def prepare_transcription_fragments(relevant_movie_chunks, max_score: int):
+def prepare_transcription_fragments(relevant_movie_chunks, max_score: float):
     movie_fragments_for_llm = []
 
     for movie_chunk in relevant_movie_chunks:

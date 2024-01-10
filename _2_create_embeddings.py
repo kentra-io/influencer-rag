@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+
 import time
 from datetime import timedelta
 
@@ -8,13 +9,12 @@ import config
 from retrieval.punctuator import punctuate
 from retrieval.tiler import get_sentences, create_paragraphs
 from utils.console_utils import bold
-from vector_db import chroma_provider
+from vector_db.vector_db_model import get_vector_db
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-chroma = chroma_provider.get_chroma()
-
+vector_db_model = get_vector_db(config.default_vector_db)
 
 def process_transcript(file_path):
     logger.info(f"Processing file: {file_path}")
@@ -57,9 +57,9 @@ def process_transcript(file_path):
 
                     metadata = [chunk_metadata] * (len(chunks))
 
-                    chroma.add_texts(texts=chunks, metadatas=metadata)
+                    vector_db_model.add_texts(texts=chunks, metadatas=metadata)
 
-                chroma.persist()
+                vector_db_model.persist()
 
             except Exception as e:
                 logger.error(f"Unknown exception has been raised, skipping the transcript: {e}", exc_info=True)

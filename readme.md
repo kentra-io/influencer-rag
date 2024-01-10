@@ -47,11 +47,11 @@ CMAKE_ARGS="-DLLAMA_METAL=on" FORCE_CMAKE=1 pip install --upgrade --force-reinst
 
 5. Run local Mistral 7B chatbot
 ```shell
-python 3_run-llm-llama-cpp.py
-```
+ python _3_run_llm_llama_cpp.py
+ ```
 or execute single prompt
 ```shell
-python 3_run-llm-llama-cpp.py "Who is Sam Altman?"
+ python _3_run_llm_llama_cpp.py "Who is Sam Altman?"
 ```
 
 The code was written for Mistral 7B, but any other GGUF model should also work. Just download the model to `../models/` and update `model_name` in `config.py`.
@@ -71,7 +71,7 @@ pip install openai
 
 5. Run OpenAI chatbot
 ```shell
-python 3_run-llm-llama-cpp.py
+python _3_run-llm-llama-cpp.py
 ```
 
 ### HF Transformers
@@ -96,3 +96,14 @@ pip install streamlit
 ```shell
 streamlit run ui.py
 ```
+
+## Using ElasticSearch instead of ChromaDB
+1. Run:
+```shell
+docker compose up -d
+```
+to start ElasticSearch and Kibana
+
+See [elasticsearch.md](/docs/elasticsearch) for example queries.
+
+2. Modify `config.py` - `default_vector_db` variable to make ELASTICSEARCH a default vector store.

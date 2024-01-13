@@ -16,7 +16,7 @@ def evaluate_all_questions():
     if not os.path.exists(questions_file_path):
         print("In order to evaluate all questions, you need to provide a questions.csv file in the evaluations "
               "directory. This will be done automatically when you start asking questions while you have evaluations "
-              "enabled. To enable it, set evaluations_enabled = True in config. Check evaluations/readme.md for more.")
+              "enabled. To enable it, set evaluations_enabled = True in config. Check evaluations/evaluations.md for more.")
         print("You can also create the file manually and add questions to it.")
         exit(1)
 

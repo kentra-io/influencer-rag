@@ -83,7 +83,7 @@ python 3_run-llm-llama-cpp.py
 ```
 
 ## Enabling evaluations
-Evaluations have a separate [readme](evaluations/readme.md)
+Evaluations have a separate [readme](docs/evaluations.md)
 
 ## Using Streamlit UI
 

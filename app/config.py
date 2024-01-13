@@ -25,9 +25,9 @@ vector_db_configs = {
     VectorDbType.ELASTICSEARCH: VectorDbConfig(max_score_threshold)
 }
 
-transcripts_dir_path = "data/transcripts"
-evaluations_dir_path = "data/evaluations"
-local_models_path = "../models/"
+transcripts_dir_path = "../data/transcripts"
+evaluations_dir_path = "../data/evaluations"
+local_models_path = "../../models/"
 
 k = 4
 

@@ -1,6 +1,5 @@
 import csv
 import os
-from typing import IO
 
 from ragas import evaluate
 from datasets import Dataset
@@ -10,7 +9,7 @@ import config
 from common import file_utils
 from common.file_utils import createFolderIfNotExists
 from evaluations.model.evaluation import Evaluation
-from evaluations.model.rag_configuration import RagConfiguration
+from evaluations.evaluations_config import evaluations_config
 from model.rag_response import RagResponse
 
 
@@ -21,7 +20,6 @@ def evaluate_question(query, context, answer):
             faithfulness=0,
             answer_relevancy=0,
             context_precision=0,
-            rag_configuration=RagConfiguration()  # todo implement configuration labels
         )
 
     print(f"Evaluating. \n Query: \n {query} \n Context length: \n {context_length} \n Answer: {answer} ")
@@ -48,7 +46,6 @@ def evaluate_question(query, context, answer):
         faithfulness=evaluation["faithfulness"],
         answer_relevancy=evaluation["answer_relevancy"],
         context_precision=evaluation["context_precision"],
-        rag_configuration=RagConfiguration()  # todo implement configuration labels
     )
 
 
@@ -82,7 +79,7 @@ def is_query_present(questions_file_path, query):
 
 
 def persist_single_evaluation_result(channel_handle, rag_response: RagResponse):
-    label = rag_response.evaluation.rag_configuration.get_label()
+    label = evaluations_config.get_label()
     joined_context = join_context(rag_response.relevant_movie_chunks)
     file_path = f"{config.evaluations_dir_path}/{channel_handle}/evaluations_{label}.csv"
     file_utils.createFolderIfNotExists(file_path)
@@ -112,7 +109,7 @@ def join_context(context):
 
 
 def persist_evaluation(response: RagResponse, k):
-    print("Persisting evaluation for the following configuration:" + str(response.evaluation.rag_configuration))
-    channel_handle = "BenFelixCSI"  # todo implement handling channel handle, right now it's hardcoded
+    print(f"Persisting evaluation for the following configuration: {evaluations_config.get_label()}")
+    channel_handle = evaluations_config.channel_handle
     persist_question(channel_handle, response.query)
     persist_single_evaluation_result(channel_handle, response)

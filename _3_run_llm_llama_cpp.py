@@ -6,6 +6,7 @@ from datetime import timedelta
 import config
 from evaluations import evaluations
 from evaluations.evaluations import persist_evaluation
+from evaluations.evaluations_config import evaluations_config
 from llm_model.llm_model_factory import get_llm_model
 from model.rag_response import RagResponse
 from vector_db.vector_db_model import get_vector_db
@@ -74,7 +75,7 @@ def ask_question(users_query, enable_vector_search, k=config.k, vector_db=config
 
     execution_time = time.time() - query_start_time
 
-    if config.evaluations_enabled and enable_vector_search and llm_user_response:
+    if evaluations_config.evaluations_enabled and enable_vector_search and llm_user_response:
         evaluation = evaluations.evaluate_question(users_query, relevant_movies_list, llm_user_response)
     else:
         evaluation = None

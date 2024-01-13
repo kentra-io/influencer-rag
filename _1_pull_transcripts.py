@@ -83,7 +83,7 @@ def get_all_transcripts(channel_id, api_key, file_path, language='en'):
 
 def main():
     for channel in config.channels:
-        file_path = f"{parent_file_path}/{channel.handle}_transcripts.json"
+        file_path = f"{config.transcripts_dir_path}/{channel.handle}_transcripts.json"
         file_utils.createFolderIfNotExists(file_path)
 
         if not os.path.exists(file_path):

@@ -8,6 +8,7 @@ from vector_db.vector_db_model import VectorDbType
 class VectorDbConfig:
     max_score: float
 
+
 channels = [
     Channel('WesRoth', 'UCqcbQf6yw5KzRoDDcZ_wBSw'),
     Channel('PromptEngineer48', 'UCX6c6hTIqcphjMsXbeanJ1g'),
@@ -27,12 +28,11 @@ vector_db_configs = {
 transcripts_dir_path = "data/transcripts"
 evaluations_dir_path = "data/evaluations"
 local_models_path = "../models/"
-evaluations_enabled = False
 
-k = 2
+k = 4
 
 # disable parallelism for tokenizers to silence the warnings
-TOKENIZERS_PARALLELISM=False
+TOKENIZERS_PARALLELISM = False
 
 # model_name = "mistral-7b-instruct-v0.2.Q4_K_M.gguf"
 model_name = "gpt-3.5-turbo-1106"  # Requires OPENAI_API_KEY

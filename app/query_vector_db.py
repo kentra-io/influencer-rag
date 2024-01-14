@@ -2,7 +2,7 @@ import sys
 import time
 from datetime import timedelta
 
-from vector_db import chroma_provider
+from app.vector_db import chroma_provider
 
 
 def query_chroma(chroma, prompt):

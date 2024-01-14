@@ -3,13 +3,13 @@ import sys
 import time
 from datetime import timedelta
 
-import config
-from evaluations import evaluations
-from evaluations.evaluations import persist_evaluation
-from evaluations.evaluations_config import evaluations_config
-from llm_model.llm_model_factory import get_llm_model
-from model.rag_response import RagResponse
-from vector_db.vector_db_model import get_vector_db
+from app import config
+from app.evaluations import evaluations
+from app.evaluations.evaluations import persist_evaluation
+from app.evaluations.evaluations_config import evaluations_config
+from app.llm_model.llm_model_factory import get_llm_model
+from app.model.rag_response import RagResponse
+from app.vector_db.vector_db_model import get_vector_db
 
 
 def init():

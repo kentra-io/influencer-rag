@@ -1,6 +1,6 @@
 import streamlit as st
 from _3_run_llm_llama_cpp import process_question
-from vector_db.vector_db_model import VectorDbType
+from app.vector_db.vector_db_model import VectorDbType
 
 # Streamlit Page Configuration
 st.set_page_config(

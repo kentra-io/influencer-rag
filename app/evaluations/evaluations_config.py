@@ -1,5 +1,5 @@
-from config import channels
-from evaluations.model.evaluation import EvaluationsConfig
+from app.config import channels
+from app.evaluations.model.evaluation import EvaluationsConfig
 
 evaluations_config = EvaluationsConfig(
     channel_handle=channels[0].handle,

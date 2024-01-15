@@ -19,12 +19,12 @@ pip install -r requirements.txt
 
 4. Pull all transcripts from Youtube into `./data/transcripts/` folder
 ```shell
-python 1_pull-transcripts.py
+python -m app._1_pull_transcripts
 ```
 
 5. Create embeddings from all transcripts and save to vector storage 
 ```shell
-python 2_create-embeddings.py
+python -m app._2_create_embeddings
 ```
 
 ## Running chatbot on Mistral 7B with llama.cpp
@@ -47,11 +47,11 @@ CMAKE_ARGS="-DLLAMA_METAL=on" FORCE_CMAKE=1 pip install --upgrade --force-reinst
 
 5. Run local Mistral 7B chatbot
 ```shell
- python _3_run_llm_llama_cpp.py
+ python -m app._3_run_llm_llama_cpp
  ```
 or execute single prompt
 ```shell
- python _3_run_llm_llama_cpp.py "Who is Sam Altman?"
+ python -m app._3_run_llm_llama_cpp "Who is Sam Altman?"
 ```
 
 The code was written for Mistral 7B, but any other GGUF model should also work. Just download the model to `../models/` and update `model_name` in `config.py`.
@@ -71,7 +71,7 @@ pip install openai
 
 5. Run OpenAI chatbot
 ```shell
-python _3_run-llm-llama-cpp.py
+python -m app._3_run_llm_llama_cpp
 ```
 
 ### HF Transformers
@@ -79,7 +79,7 @@ python _3_run-llm-llama-cpp.py
 
 2. Run local chatbot with HF Transformers
 ```shell
-python 3_run-llm-llama-cpp.py
+python -m app._3_run_llm_llama_cpp
 ```
 
 ## Enabling evaluations
@@ -94,7 +94,7 @@ pip install streamlit
 
 2. Run streamlit app
 ```shell
-streamlit run ui.py
+python -m streamlit run app/ui.py
 ```
 
 ## Using ElasticSearch instead of ChromaDB

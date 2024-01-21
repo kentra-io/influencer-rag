@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from model.channel import Channel
-from vector_db.vector_db_model import VectorDbType
+from app.model.channel import Channel
+from app.vector_db.vector_db_model import VectorDbType
 
 
 @dataclass
@@ -10,10 +10,10 @@ class VectorDbConfig:
 
 
 channels = [
-    Channel('WesRoth', 'UCqcbQf6yw5KzRoDDcZ_wBSw'),
-    Channel('PromptEngineer48', 'UCX6c6hTIqcphjMsXbeanJ1g'),
-    Channel('engineerprompt', 'UCDq7SjbgRKty5TgGafW8Clg'),
-    # Channel('BenFelixCSI', 'UCDXTQ8nWmx_EhZ2v-kp7QxA')
+    # Channel('WesRoth', 'UCqcbQf6yw5KzRoDDcZ_wBSw'),
+    # Channel('PromptEngineer48', 'UCX6c6hTIqcphjMsXbeanJ1g'),
+    # Channel('engineerprompt', 'UCDq7SjbgRKty5TgGafW8Clg'),
+    Channel('BenFelixCSI', 'UCDXTQ8nWmx_EhZ2v-kp7QxA')
 ]
 
 # In theory should be the same for all cosine similarity searches

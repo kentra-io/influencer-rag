@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from model.llm_model_response import LlmModelResponse
+from app.model.llm_model_response import LlmModelResponse
 
 
 class LlmModel(ABC):

@@ -5,11 +5,11 @@ import os
 import time
 from datetime import timedelta
 
-import config
-from retrieval.punctuator import punctuate
-from retrieval.tiler import get_sentences, create_paragraphs
-from utils.console_utils import bold
-from vector_db.vector_db_model import get_vector_db
+from app import config
+from app.retrieval.punctuator import punctuate
+from app.retrieval.tiler import get_sentences, create_paragraphs
+from app.utils.console_utils import bold
+from app.vector_db.vector_db_model import get_vector_db
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -66,6 +66,7 @@ def process_transcript(file_path):
 
 
 def main():
+    print("Starting embeddings generation")
     for channel in config.channels:
         transcript_file_path = f"{config.transcripts_dir_path}/{channel.handle}_transcripts.json"
         if os.path.exists(transcript_file_path):

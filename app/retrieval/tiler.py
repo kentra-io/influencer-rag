@@ -11,7 +11,7 @@ import torch
 from scipy.spatial.distance import cosine
 from transformers import AutoTokenizer, AutoModel
 
-from utils.console_utils import bold, blue, red
+from app.utils.console_utils import bold, red
 
 default_embedding_model = "all-MiniLM-L6-v2"
 

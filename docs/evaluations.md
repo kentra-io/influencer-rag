@@ -23,7 +23,7 @@ You need to have questions.csv file present in data/evaluations/{channel_handle}
 Questions you have asked are stored in data/questions/{channel_handle}/questions.csv. You can enrich them with ground truths, but even without that you can evaluate the quality of current setup of the application. You can also add new questions to that file.
 To do that, in the root folder of the project run:
 ```shell
-python evaluate_all_questions.py
+python -m app.evaluate_all_questions
 ```
 
 ###TODO: 

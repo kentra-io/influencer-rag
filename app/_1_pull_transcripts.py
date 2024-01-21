@@ -4,8 +4,8 @@ import os
 from googleapiclient.discovery import build
 from youtube_transcript_api import YouTubeTranscriptApi, NoTranscriptFound
 
-import config
-from common import file_utils
+from app import config
+from app.common import file_utils
 
 API_KEY = os.getenv('GOOGLE_API_KEY')
 

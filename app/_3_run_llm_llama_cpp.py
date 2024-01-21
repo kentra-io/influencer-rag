@@ -3,13 +3,16 @@ import sys
 import time
 from datetime import timedelta
 
-import config
-from evaluations import evaluations
-from evaluations.evaluations import persist_evaluation
-from evaluations.evaluations_config import evaluations_config
-from llm_model.llm_model_factory import get_llm_model
-from model.rag_response import RagResponse
-from vector_db.vector_db_model import get_vector_db
+from app import config
+from app.evaluations import evaluations
+from app.evaluations.evaluations import persist_evaluation
+from app.evaluations.evaluations_config import evaluations_config
+from app.llm_model.llm_model_factory import get_llm_model
+from app.model.rag_response import RagResponse
+from app.vector_db.vector_db_model import get_vector_db
+
+
+llm_model = None
 
 
 def init():
@@ -17,7 +20,14 @@ def init():
 
 
 init()
-llm_model = get_llm_model(config.model_name, config.local_models_path)
+
+
+def get_llm_model_local():
+    global llm_model
+    if llm_model is None:
+        llm_model = get_llm_model(config.model_name, config.local_models_path)
+
+    return llm_model
 
 
 def prepare_transcription_fragments(relevant_movie_chunks, max_score: float):
@@ -68,7 +78,7 @@ def ask_question(users_query, enable_vector_search, k=config.k, vector_db=config
                   "based on your knowledge.")
 
     llm_model_response = (
-        llm_model.get_model_response(system, users_query))
+        get_llm_model_local().get_model_response(system, users_query))
 
     llm_user_response = llm_model_response.llm_user_response
     llm_full_response = llm_model_response.llm_full_response

@@ -2,8 +2,8 @@ import os
 
 from openai import OpenAI
 
-from llm_model.llm_model import LlmModel
-from model.llm_model_response import LlmModelResponse
+from app.llm_model.llm_model import LlmModel
+from app.model.llm_model_response import LlmModelResponse
 
 
 class LlmModelOpenAI(LlmModel):

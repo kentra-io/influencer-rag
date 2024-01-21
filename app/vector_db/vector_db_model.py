@@ -3,8 +3,8 @@ from enum import Enum
 
 from langchain.schema.vectorstore import VectorStore
 
-from vector_db.chroma_provider import get_chroma
-from vector_db.elasticsearch_provider import get_elasticsearch
+from app.vector_db.chroma_provider import get_chroma
+from app.vector_db.elasticsearch_provider import get_elasticsearch
 
 
 class VectorDbType(Enum):

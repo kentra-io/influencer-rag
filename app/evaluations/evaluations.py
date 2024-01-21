@@ -5,12 +5,12 @@ from ragas import evaluate
 from datasets import Dataset
 from ragas.metrics import context_precision, faithfulness, answer_relevancy
 
-import config
-from common import file_utils
-from common.file_utils import createFolderIfNotExists
-from evaluations.model.evaluation import Evaluation
-from evaluations.evaluations_config import evaluations_config
-from model.rag_response import RagResponse
+from app import config
+from app.common import file_utils
+from app.common.file_utils import createFolderIfNotExists
+from app.evaluations.model.evaluation import Evaluation
+from app.evaluations.evaluations_config import evaluations_config
+from app.model.rag_response import RagResponse
 
 
 def evaluate_question(query, context, answer):
@@ -74,7 +74,6 @@ def is_query_present(questions_file_path, query):
             for row in reader:
                 if row["query"] == query:
                     query_present = True
-        print("is_query_present: " + str(is_query_present))
         return query_present
 
 

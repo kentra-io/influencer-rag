@@ -16,3 +16,4 @@ spacy==3.7.2
 numpy==1.26.2
 networkx==3.2.1
 ragas==0.0.22
+llama_cpp_python==0.2.23

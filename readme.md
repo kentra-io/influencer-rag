@@ -1,3 +1,5 @@
+[![influencer-rag](https://github.com/kgolebiowski/influencer-rag/actions/workflows/python-app.yml/badge.svg)](https://github.com/kgolebiowski/influencer-rag/actions/workflows/python-app.yml)
+
 # How to run
 ## Prerequisites
 1. 🐍 Install [conda](https://www.anaconda.com/download) for virtual environment management. Create and activate a new virtual environment.

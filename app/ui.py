@@ -1,5 +1,6 @@
 import streamlit as st
 from _3_run_llm_llama_cpp import process_question
+from app import config
 from app.vector_db.vector_db_model import VectorDbType
 
 # Streamlit Page Configuration
@@ -30,6 +31,12 @@ with st.sidebar:
     st.title("▶️ Influencer RAG")
     top_k = st.slider("Top-k", min_value=1, max_value=50, value=3)
     vector_db = st.selectbox('Select Vector DB', vector_databases)
+    if VectorDbType(vector_db) == VectorDbType.WEAVIATE:
+        hybrid_search = st.selectbox('Use hybrid search?', ("No", "Yes"))
+    if 'hybrid_search' in vars() and hybrid_search == "Yes":
+        alpha = st.slider("Alpha", min_value=0.0, max_value=1.0, value=0.5)
+    else:
+        alpha = config.alpha
 
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
@@ -51,7 +58,9 @@ if prompt := st.chat_input("What is up?"):
             users_query=prompt,
             enable_vector_search=True,
             k=top_k,
-            vector_db=VectorDbType(vector_db)
+            vector_db=VectorDbType(vector_db),
+            hybrid_search=(hybrid_search == "Yes"),
+            alpha=alpha
         )
 
     # Prepare new chat entry with response and chunks

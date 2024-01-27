@@ -99,13 +99,6 @@ pip install streamlit
 python -m streamlit run app/ui.py
 ```
 
-## Using ElasticSearch instead of ChromaDB
-1. Run:
-```shell
-docker compose up -d
-```
-to start ElasticSearch and Kibana
+## Elasticsearch - see [elasticsearch](docs/elasticsearch.md)
 
-See [elasticsearch.md](/docs/elasticsearch) for example queries.
-
-2. Modify `config.py` - `default_vector_db` variable to make ELASTICSEARCH a default vector store.
+## Weaviate - see [weaviate](docs/weaviate.md)

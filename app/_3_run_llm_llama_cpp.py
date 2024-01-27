@@ -49,12 +49,12 @@ def prepare_transcription_fragments(relevant_movie_chunks, max_score: float):
         return None
 
 
-def ask_question(users_query, enable_vector_search, k=config.k, vector_db=config.default_vector_db):
+def ask_question(users_query, enable_vector_search, k=config.k, vector_db=config.default_vector_db, hybrid_search=config.hybrid_search, alpha=config.alpha):
     query_start_time = time.time()
 
     if enable_vector_search:
         vector_db_model = get_vector_db(vector_db)
-        relevant_movie_chunks = vector_db_model.similarity_search_with_score(users_query, k)
+        relevant_movie_chunks = vector_db_model.similarity_search_with_score(users_query, k, hybrid_search, alpha)
         relevant_movies_list = prepare_transcription_fragments(
             relevant_movie_chunks,
             config.vector_db_configs[vector_db].max_score
@@ -100,8 +100,8 @@ def ask_question(users_query, enable_vector_search, k=config.k, vector_db=config
     )
 
 
-def process_question(users_query, enable_vector_search, k=config.k, vector_db=config.default_vector_db):
-    response = ask_question(users_query, enable_vector_search, k, vector_db=vector_db)
+def process_question(users_query, enable_vector_search, k=config.k, vector_db=config.default_vector_db, hybrid_search=config.hybrid_search, alpha=config.alpha):
+    response = ask_question(users_query, enable_vector_search, k, vector_db=vector_db, hybrid_search=hybrid_search, alpha=alpha)
 
     if response.evaluation:
         persist_evaluation(response, k)

@@ -22,7 +22,8 @@ max_score_threshold = 0.6
 default_vector_db = VectorDbType.CHROMA
 vector_db_configs = {
     VectorDbType.CHROMA: VectorDbConfig(max_score_threshold),
-    VectorDbType.ELASTICSEARCH: VectorDbConfig(max_score_threshold)
+    VectorDbType.ELASTICSEARCH: VectorDbConfig(max_score_threshold),
+    VectorDbType.WEAVIATE: VectorDbConfig(max_score_threshold)
 }
 
 transcripts_dir_path = "data/transcripts"
@@ -30,6 +31,8 @@ evaluations_dir_path = "data/evaluations"
 local_models_path = "../models/"
 
 k = 4
+hybrid_search = False
+alpha=0.50
 
 # disable parallelism for tokenizers to silence the warnings
 TOKENIZERS_PARALLELISM = False

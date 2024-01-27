@@ -12,6 +12,9 @@ st.set_page_config(
 
 vector_databases = [member.value for member in VectorDbType]
 
+hybrid_search = "No"
+
+
 def render_response(entry):
     with st.chat_message("assistant"):
         st.markdown(entry["assistant_response"])

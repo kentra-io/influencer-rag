@@ -12,7 +12,7 @@ docker compose up -d
 # Weaviate REST/GraphQL API examples
 
 ### Get first 10 objects
-```json
+```
 GET http://localhost:8080/v1/objects?class=LangChain&limit=10
 ```
 

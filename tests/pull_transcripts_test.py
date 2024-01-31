@@ -36,7 +36,7 @@ class TestGetAllTranscripts(unittest.TestCase):
         with patch('app._1_pull_transcripts.getPlaylistItems', return_value=mock_playlist_items_response) as mock_get:
             logger.debug("log test")
             channel_id = 'UCDXTQ8nWmx_EhZ2v-kp7QxA'
-            get_all_transcripts(channel_id, self.file_path)
+            get_all_transcripts(channel_id, "mock_api_key", self.file_path)
 
         self.assertTranscriptGotCreated()
 

@@ -19,8 +19,8 @@ def get_uploads_playlist_id(channel_id, youtube):
     return uploads_playlist_id
 
 
-def get_all_transcripts(channel_id, file_path, language='en'):
-    youtube = build('youtube', 'v3', developerKey=GOOGLE_API_KEY)
+def get_all_transcripts(channel_id, api_key, file_path, language='en'):
+    youtube = build('youtube', 'v3', developerKey=api_key)
 
     # Start the JSON array
     with open(file_path, 'w') as file:
@@ -94,7 +94,7 @@ def main():
 
         if not os.path.exists(file_path):
             logger.info(f"Retrieving transcriptions for channel '{channel.handle}':")
-            get_all_transcripts(channel.id, file_path)
+            get_all_transcripts(channel.id, GOOGLE_API_KEY, file_path)
         else:
             logger.warning(f"File '{file_path}' exists, skipping retrieval for channel '{channel.handle}'")
 

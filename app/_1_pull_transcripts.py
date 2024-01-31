@@ -19,8 +19,7 @@ def get_uploads_playlist_id(channel_id, youtube):
     return uploads_playlist_id
 
 
-def get_all_transcripts(channel_id, api_key, file_path, language='en'):
-    youtube = build('youtube', 'v3', developerKey=api_key)
+def get_all_transcripts(channel_id, file_path, language='en'):
 
     # Start the JSON array
     with open(file_path, 'w') as file:
@@ -32,7 +31,7 @@ def get_all_transcripts(channel_id, api_key, file_path, language='en'):
     next_page_token = None
     counter = 0
     while True:
-        playlistItemsResponse = getPlaylistItems(youtube, next_page_token, channel_id)
+        playlistItemsResponse = getPlaylistItems(next_page_token, channel_id)
 
         for item in playlistItemsResponse['items']:
             video_id = item['snippet']['resourceId']['videoId']
@@ -77,7 +76,8 @@ def get_all_transcripts(channel_id, api_key, file_path, language='en'):
         file.write(']')
 
 
-def getPlaylistItems(youtube, next_page_token, channel_id):
+def getPlaylistItems(next_page_token, channel_id):
+    youtube = build('youtube', 'v3', developerKey=GOOGLE_API_KEY)
     request = youtube.playlistItems().list(
         part='snippet',
         playlistId=get_uploads_playlist_id(channel_id, youtube),
@@ -94,7 +94,7 @@ def main():
 
         if not os.path.exists(file_path):
             logger.info(f"Retrieving transcriptions for channel '{channel.handle}':")
-            get_all_transcripts(channel.id, GOOGLE_API_KEY, file_path)
+            get_all_transcripts(channel.id, file_path)
         else:
             logger.warning(f"File '{file_path}' exists, skipping retrieval for channel '{channel.handle}'")
 

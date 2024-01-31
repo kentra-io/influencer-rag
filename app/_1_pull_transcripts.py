@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 
 from googleapiclient.discovery import build
@@ -7,7 +8,8 @@ from youtube_transcript_api import YouTubeTranscriptApi, NoTranscriptFound
 from app import config
 from app.common import file_utils
 
-API_KEY = os.getenv('GOOGLE_API_KEY')
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
+logger = logging.getLogger(__name__)
 
 
 def get_uploads_playlist_id(channel_id, youtube):
@@ -17,8 +19,8 @@ def get_uploads_playlist_id(channel_id, youtube):
     return uploads_playlist_id
 
 
-def get_all_transcripts(channel_id, api_key, file_path, language='en'):
-    youtube = build('youtube', 'v3', developerKey=api_key)
+def get_all_transcripts(channel_id, file_path, language='en'):
+    youtube = build('youtube', 'v3', developerKey=GOOGLE_API_KEY)
 
     # Start the JSON array
     with open(file_path, 'w') as file:
@@ -30,23 +32,17 @@ def get_all_transcripts(channel_id, api_key, file_path, language='en'):
     next_page_token = None
     counter = 0
     while True:
-        request = youtube.playlistItems().list(
-            part='snippet',
-            playlistId=get_uploads_playlist_id(channel_id, youtube),
-            maxResults=50,
-            pageToken=next_page_token
-        )
-        response = request.execute()
+        playlistItemsResponse = getPlaylistItems(youtube, next_page_token, channel_id)
 
-        for item in response['items']:
+        for item in playlistItemsResponse['items']:
             video_id = item['snippet']['resourceId']['videoId']
             video_title = item['snippet']['title']
             video_url = f"https://www.youtube.com/watch?v={video_id}"
             channel_name = item['snippet']['channelTitle']
 
             counter += 1
-            count = response.get("pageInfo").get("totalResults")
-            print(f"- Processing video {counter} of {count}")
+            count = playlistItemsResponse.get("pageInfo").get("totalResults")
+            logger.info(f"Processing video {counter} of {count}")
 
             try:
                 transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
@@ -68,11 +64,11 @@ def get_all_transcripts(channel_id, api_key, file_path, language='en'):
                     first_video = False
 
             except NoTranscriptFound:
-                print(f"No transcript found for video ID: {video_id}")
+                logger.error(f"No transcript found for video ID: {video_id}")
             except Exception as e:
-                print(f"Error retrieving transcript for video ID {video_id}: {e}")
+                logger.error(f"Error retrieving transcript for video ID {video_id}: {e}")
 
-        next_page_token = response.get('nextPageToken')
+        next_page_token = playlistItemsResponse.get('nextPageToken')
         if not next_page_token:
             break
 
@@ -81,16 +77,26 @@ def get_all_transcripts(channel_id, api_key, file_path, language='en'):
         file.write(']')
 
 
+def getPlaylistItems(youtube, next_page_token, channel_id):
+    request = youtube.playlistItems().list(
+        part='snippet',
+        playlistId=get_uploads_playlist_id(channel_id, youtube),
+        maxResults=50,
+        pageToken=next_page_token
+    )
+    return request.execute()
+
+
 def main():
     for channel in config.channels:
         file_path = f"{config.transcripts_dir_path}/{channel.handle}_transcripts.json"
         file_utils.createFolderIfNotExists(file_path)
 
         if not os.path.exists(file_path):
-            print(f"Retrieving transcriptions for channel '{channel.handle}':")
-            get_all_transcripts(channel.id, API_KEY, file_path)
+            logger.info(f"Retrieving transcriptions for channel '{channel.handle}':")
+            get_all_transcripts(channel.id, file_path)
         else:
-            print(f"File '{file_path}' exists, skipping retrieval for channel '{channel.handle}'")
+            logger.warning(f"File '{file_path}' exists, skipping retrieval for channel '{channel.handle}'")
 
 
 if __name__ == "__main__":

@@ -31,16 +31,16 @@ def get_all_transcripts(channel_id, file_path, language='en'):
     next_page_token = None
     counter = 0
     while True:
-        playlistItemsResponse = getPlaylistItems(next_page_token, channel_id)
+        playlist_items_response = get_playlist_items(next_page_token, channel_id)
 
-        for item in playlistItemsResponse['items']:
+        for item in playlist_items_response['items']:
             video_id = item['snippet']['resourceId']['videoId']
             video_title = item['snippet']['title']
             video_url = f"https://www.youtube.com/watch?v={video_id}"
             channel_name = item['snippet']['channelTitle']
 
             counter += 1
-            count = playlistItemsResponse.get("pageInfo").get("totalResults")
+            count = playlist_items_response.get("pageInfo").get("totalResults")
             logger.info(f"Processing video {counter} of {count}")
 
             try:
@@ -67,7 +67,7 @@ def get_all_transcripts(channel_id, file_path, language='en'):
             except Exception as e:
                 logger.error(f"Error retrieving transcript for video ID {video_id}: {e}")
 
-        next_page_token = playlistItemsResponse.get('nextPageToken')
+        next_page_token = playlist_items_response.get('nextPageToken')
         if not next_page_token:
             break
 
@@ -76,7 +76,7 @@ def get_all_transcripts(channel_id, file_path, language='en'):
         file.write(']')
 
 
-def getPlaylistItems(next_page_token, channel_id):
+def get_playlist_items(next_page_token, channel_id):
     youtube = build('youtube', 'v3', developerKey=GOOGLE_API_KEY)
     request = youtube.playlistItems().list(
         part='snippet',

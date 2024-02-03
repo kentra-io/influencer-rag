@@ -1,0 +1,24 @@
+{
+  "kind": "youtube#playlistItemListResponse",
+  "etag": "F1dOyLoMD1SledO4CIaQk8FgThI",
+  "items": [
+    {
+      "kind": "youtube#playlistItem",
+      "etag": "Vr7esWoGFKA0NTevamSOJKiurBA",
+      "id": "VVVEWFRROG5XbXhfRWhaMnYta3A3UXhBLmM0QU1GaWNYWHFn",
+      "snippet": {
+        "channelId": "UCDXTQ8nWmx_EhZ2v-kp7QxA",
+        "title": "Is ESG Investing Counterproductive?",
+        "resourceId": {
+          "kind": "youtube#video",
+          "videoId": "c4AMFicXXqg"
+        },
+        "channelTitle": "Ben Felix"
+      }
+    }
+  ],
+  "pageInfo": {
+    "totalResults": 1,
+    "resultsPerPage": 50
+  }
+}

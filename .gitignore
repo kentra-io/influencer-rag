@@ -3,3 +3,4 @@ data/*
 ./*.iml
 .env
 __pycache__
+tests/test_data

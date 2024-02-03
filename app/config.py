@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 
 from app.model.channel import Channel
@@ -8,6 +9,8 @@ from app.vector_db.vector_db_model import VectorDbType
 class VectorDbConfig:
     max_score: float
 
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 channels = [
     # Channel('WesRoth', 'UCqcbQf6yw5KzRoDDcZ_wBSw'),
@@ -32,7 +35,7 @@ local_models_path = "../models/"
 
 k = 4
 hybrid_search = False
-alpha=0.50
+alpha = 0.50
 
 # disable parallelism for tokenizers to silence the warnings
 TOKENIZERS_PARALLELISM = False

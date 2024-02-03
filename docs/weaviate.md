@@ -29,3 +29,23 @@ POST http://localhost:8080/v1/graphql
     }
 }
 ```
+
+### Hybrid search example
+```
+{
+  Get {
+    LangChain(limit: 4, hybrid: { query: "who is sam altman?", alpha: 0.5 }) {
+      title
+      channel
+      url
+      file
+      paragraph
+      text
+      _additional {
+        explainScore
+        score
+      }
+    }
+  }
+}
+```

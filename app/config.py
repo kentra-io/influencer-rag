@@ -34,7 +34,9 @@ evaluations_dir_path = "data/evaluations"
 local_models_path = "../models/"
 
 k = 4
+additional_items_to_fetch_for_mmr = 20
 hybrid_search = False
+mmr_search = False
 alpha = 0.50
 
 # disable parallelism for tokenizers to silence the warnings

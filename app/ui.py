@@ -38,8 +38,10 @@ with st.sidebar:
         hybrid_search = st.selectbox('Use hybrid search?', ("No", "Yes"))
     if 'hybrid_search' in vars() and hybrid_search == "Yes":
         alpha = st.slider("Alpha", min_value=0.0, max_value=1.0, value=0.5)
+        mmr_search = False
     else:
         alpha = config.alpha
+        mmr_search = st.selectbox('MMR search?', ("No", "Yes"))
 
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
@@ -63,7 +65,8 @@ if prompt := st.chat_input("What is up?"):
             k=top_k,
             vector_db=VectorDbType(vector_db),
             hybrid_search=(hybrid_search == "Yes"),
-            alpha=alpha
+            alpha=alpha,
+            mmr_search=(mmr_search == "Yes")
         )
 
     # Prepare new chat entry with response and chunks

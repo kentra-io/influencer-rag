@@ -1,6 +1,7 @@
 # Switching to ElasticSearch DB
 1. Run:
 ```shell
+cd docker/elasticsearch
 docker compose up -d
 ```
 to start ElasticSearch and Kibana
@@ -15,7 +16,7 @@ Navigate to `Dev Tools` -> `Console` to run ES queries.
 # Example Queries
 
 ### Query all embeddings
-```json
+```
 GET youtube_transcripts/_search
 {
   "query": {
@@ -25,6 +26,6 @@ GET youtube_transcripts/_search
 ```
 
 ### Delete index
-```json
+```
 DELETE youtube_transcripts/
 ```

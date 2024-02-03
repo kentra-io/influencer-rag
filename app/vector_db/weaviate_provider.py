@@ -21,7 +21,6 @@ def get_client():
 
 
 def get_weaviate():
-    # vectorstore = WeaviateHybridSearchRetriever(
     vectorstore = Weaviate(
         client=get_client(),
         index_name="LangChain",

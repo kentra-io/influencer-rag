@@ -9,7 +9,7 @@ from langchain_core.retrievers import BaseRetriever
 from app import config
 from app.vector_db.chroma_provider import get_chroma
 from app.vector_db.elasticsearch_provider import get_elasticsearch
-from app.vector_db.weaviate_provider import get_weaviate, get_weaviate_hybrid_retriever, get_weaviate_mrr_retriever
+from app.vector_db.weaviate_provider import get_weaviate, get_weaviate_hybrid_retriever
 
 
 class VectorDbType(Enum):
